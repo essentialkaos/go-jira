@@ -6,12 +6,19 @@
 ################################################################################
 
 .DEFAULT_GOAL := help
-.PHONY = fmt deps help
+.PHONY = fmt deps deps-test test help
 
 ################################################################################
 
 deps: ## Download dependencies
 	go get -d -v github.com/erikdubbelboer/fasthttp
+
+deps-test: ## Download dependencies for tests
+	git config --global http.https://pkg.re.followRedirects true
+	go get -d -v pkg.re/check.v1
+
+test: ## Run tests
+	go test -covermode=count .
 
 fmt: ## Format source code with gofmt
 	find . -name "*.go" -exec gofmt -s -w {} \;
