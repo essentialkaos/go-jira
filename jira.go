@@ -36,6 +36,9 @@ var (
 	ErrInitEmptyUser     = errors.New("User can't be empty")
 	ErrInitEmptyPassword = errors.New("Password can't be empty")
 	ErrNoPerms           = errors.New("User does not have permission to use confluence")
+	ErrInvalidInput      = errors.New("Input is invalid")
+	ErrWrongLinkID       = errors.New("LinkId is not a valid number, or the remote issue link with the given id does not belong to the given issue")
+	ErrNoAuth            = errors.New("Calling user is not authenticated")
 	ErrNoContent         = errors.New("There is no content with the given ID, or the calling user does not have permission to view the content")
 )
 
@@ -75,10 +78,10 @@ func (api *API) SetUserAgent(app, version string) {
 
 // GetIssue returns a full representation of the issue for the given issue key
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4164
-func (api *API) GetIssue(idOrKey string, params IssueParams) (*Issue, error) {
+func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error) {
 	result := &Issue{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/issue/"+idOrKey,
+		"GET", "/rest/api/2/issue/"+issueIDOrKey,
 		params, result, nil,
 	)
 
@@ -96,10 +99,10 @@ func (api *API) GetIssue(idOrKey string, params IssueParams) (*Issue, error) {
 
 // GetComments returns all comments for an issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3930
-func (api *API) GetComments(idOrKey string, params ExpandParameters) (*CommentCollection, error) {
+func (api *API) GetComments(issueIDOrKey string, params ExpandParameters) (*CommentCollection, error) {
 	result := &CommentCollection{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/issue/"+idOrKey+"/comment",
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/comment",
 		params, result, nil,
 	)
 
@@ -117,10 +120,10 @@ func (api *API) GetComments(idOrKey string, params ExpandParameters) (*CommentCo
 
 // GetComment return comment for an issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3987
-func (api *API) GetComment(idOrKey, commentID string, params ExpandParameters) (*Comment, error) {
+func (api *API) GetComment(issueIDOrKey, commentID string, params ExpandParameters) (*Comment, error) {
 	result := &Comment{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/issue/"+idOrKey+"/comment/"+commentID,
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/comment/"+commentID,
 		params, result, nil,
 	)
 
@@ -138,10 +141,10 @@ func (api *API) GetComment(idOrKey, commentID string, params ExpandParameters) (
 
 // GetIssueMeta returns the meta data for editing an issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4364
-func (api *API) GetIssueMeta(idOrKey string) (*IssueMeta, error) {
+func (api *API) GetIssueMeta(issueIDOrKey string) (*IssueMeta, error) {
 	result := &IssueMeta{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/issue/"+idOrKey+"/editmeta",
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/editmeta",
 		EmptyParameters{}, result, nil,
 	)
 
@@ -157,11 +160,12 @@ func (api *API) GetIssueMeta(idOrKey string) (*IssueMeta, error) {
 	return result, nil
 }
 
-// GetRemoteLink return sub-resource representing the remote issue links on the issue
-func (api *API) GetRemoteLink(idOrKey string, params RemoteLinkParams) ([]*RemoteLink, error) {
+// GetRemoteLinks return sub-resource representing the remote issue links on the issue
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4385
+func (api *API) GetRemoteLinks(issueIDOrKey string, params RemoteLinkParams) ([]*RemoteLink, error) {
 	result := []*RemoteLink{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/issue/"+idOrKey+"/remotelink",
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/remotelink",
 		params, &result, nil,
 	)
 
@@ -171,8 +175,37 @@ func (api *API) GetRemoteLink(idOrKey string, params RemoteLinkParams) ([]*Remot
 
 	switch statusCode {
 	case 401:
+		return nil, ErrNoAuth
+	case 403:
 		return nil, ErrNoPerms
-	case 403, 404:
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetRemoteLink return remote issue link with the given id on the issue
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4478
+func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) {
+	result := &RemoteLink{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/remotelink/"+linkID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 400:
+		return nil, ErrWrongLinkID
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
 		return nil, ErrNoContent
 	}
 
