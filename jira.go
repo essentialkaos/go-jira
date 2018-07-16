@@ -212,6 +212,31 @@ func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) 
 	return result, nil
 }
 
+// GetTransitions return a list of the transitions possible for this issue by the current user,
+// along with fields that are required and their types
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4051
+func (api *API) GetTransitions(issueIDOrKey string, params TransitionsParams) ([]*Transition, error) {
+	result := &struct {
+		Transitions []*Transition `json:"transitions"`
+	}{}
+
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/transitions",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result.Transitions, nil
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]

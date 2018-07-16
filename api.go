@@ -311,6 +311,22 @@ type StatusCategory struct {
 	ColorName string `json:"colorName"`
 }
 
+// TRANSITIONS ////////////////////////////////////////////////////////////////////// //
+
+// TransitionsParams is params for fetching transitions info
+type TransitionsParams struct {
+	TransitionId string   `query:"transitionId"`
+	Expand       []string `query:"expand"`
+}
+
+// Transition contains info about transistion
+type Transition struct {
+	ID     string                `json:"id"`
+	Name   string                `json:"name"`
+	To     *Status               `json:"to"`
+	Fields map[string]*FieldMeta `json:"fields"`
+}
+
 // USERS //////////////////////////////////////////////////////////////////////////// //
 
 // User contains user info
@@ -417,8 +433,8 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ToQuery convert params to URL query
-func (p RemoteLinkParams) ToQuery() string {
-	return paramsToQuery(p)
+func (p EmptyParameters) ToQuery() string {
+	return ""
 }
 
 // ToQuery convert params to URL query
@@ -427,11 +443,16 @@ func (p ExpandParameters) ToQuery() string {
 }
 
 // ToQuery convert params to URL query
-func (p EmptyParameters) ToQuery() string {
-	return ""
+func (p IssueParams) ToQuery() string {
+	return paramsToQuery(p)
 }
 
 // ToQuery convert params to URL query
-func (p IssueParams) ToQuery() string {
+func (p RemoteLinkParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p TransitionsParams) ToQuery() string {
 	return paramsToQuery(p)
 }
