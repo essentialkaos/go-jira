@@ -168,12 +168,6 @@ type Watches struct {
 	IsWatching bool `json:"isWatching"`
 }
 
-// Votes contains info about votes
-type Votes struct {
-	Votes    int  `json:"votes"`
-	HasVoted bool `json:"hasVoted"`
-}
-
 // COMMENTS ///////////////////////////////////////////////////////////////////////// //
 
 // CommentCollection is comment collection
@@ -349,6 +343,15 @@ type Version struct {
 	Description string `json:"description"`
 	IsArchived  bool   `json:"archived"`
 	IsReleased  bool   `json:"released"`
+}
+
+// VOTES //////////////////////////////////////////////////////////////////////////// //
+
+// Votes contains info about votes
+type Votes struct {
+	Votes    int     `json:"votes"`
+	HasVoted bool    `json:"hasVoted"`
+	Voters   []*User `json:"voters"`
 }
 
 // WORK LOG ///////////////////////////////////////////////////////////////////////// //
