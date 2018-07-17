@@ -347,6 +347,31 @@ func (api *API) GetCreateMeta(params CreateMetaParams) ([]*Project, error) {
 	return result.Projects, nil
 }
 
+// Picker returns suggested issues which match the auto-completion query for the
+// user which executes this request. This REST method will check the user's history
+// and the user's browsing context and select this issues, which match the query.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4093
+func (api *API) Picker(params PickerParams) ([]*PickerSection, error) {
+	result := &struct {
+		Sections []*PickerSection `json:"sections"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/picker",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result.Sections, nil
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]

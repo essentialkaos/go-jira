@@ -96,6 +96,15 @@ type IssueFields struct {
 	Custom                        map[string]json.RawMessage `json:"-"`
 }
 
+// IssueInfo contains simple info about issue
+type IssueInfo struct {
+	Key         string `json:"key"`
+	KeyHTML     string `json:"keyHtml"`
+	Img         string `json:"img"`
+	Summary     string `json:"summary"`
+	SummaryText string `json:"summaryText"`
+}
+
 // IssueType contains info about issue type
 type IssueType struct {
 	ID          string `json:"id"`
@@ -395,6 +404,27 @@ type Worklog struct {
 	TimeSpentSeconds int    `json:"timeSpentSeconds"`
 }
 
+// PICKER /////////////////////////////////////////////////////////////////////////// //
+
+// PickerParams is params for fetching data from issue picker
+type PickerParams struct {
+	Query             string `query:"query"`
+	CurrentJQL        string `query:"currentJQL"`
+	CurrentIssueKey   string `query:"currentIssueKey"`
+	CurrentProjectID  string `query:"currentProjectId"`
+	ShowSubTasks      bool   `query:"showSubTasks,respect"`
+	ShowSubTaskParent bool   `query:"showSubTaskParent,respect"`
+}
+
+// PickerSection contains picker response data
+type PickerSection struct {
+	Label  string       `json:"label"`
+	Sub    string       `json:"sub"`
+	ID     string       `json:"id"`
+	Msg    string       `json:"msg"`
+	Issues []*IssueInfo `json:"issues"`
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // UnmarshalJSON is custom Date format unmarshaler
@@ -475,6 +505,11 @@ func (p RemoteLinkParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p CreateMetaParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p PickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 

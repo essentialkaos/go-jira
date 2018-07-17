@@ -17,6 +17,14 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Supported options
+const (
+	_OPTION_UNWRAP  = "unwrap"
+	_OPTION_RESPECT = "respect"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // paramsToQuery convert params to query string
 func paramsToQuery(params interface{}) string {
 	var result string
@@ -27,32 +35,45 @@ func paramsToQuery(params interface{}) string {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 		value := v.Field(i)
+		tag := field.Tag.Get("query")
 
 		switch value.Type().String() {
 		case "string":
 			if value.String() != "" {
-				result += field.Tag.Get("query") + "=" + esc(value.String()) + "&"
+				result += tag + "=" + esc(value.String()) + "&"
+			} else {
+				if hasTagOption(tag, _OPTION_RESPECT) {
+					result += getTagName(tag) + "=&"
+				}
 			}
 
 		case "int":
 			if value.Int() != 0 {
-				result += field.Tag.Get("query") + "=" + fmt.Sprintf("%d", value.Int()) + "&"
+				result += tag + "=" + fmt.Sprintf("%d", value.Int()) + "&"
+			} else {
+				if hasTagOption(tag, _OPTION_RESPECT) {
+					result += getTagName(tag) + "=0&"
+				}
 			}
 
 		case "bool":
 			if value.Bool() {
-				result += field.Tag.Get("query") + "=1&"
+				result += getTagName(tag) + "=true&"
+			} else {
+				if hasTagOption(tag, _OPTION_RESPECT) {
+					result += getTagName(tag) + "=false&"
+				}
 			}
 
 		case "time.Time":
 			d := value.Interface().(time.Time)
 			if !d.IsZero() {
-				result += field.Tag.Get("query") + "=" + fmt.Sprintf("%d-%02d-%02d", d.Year(), d.Month(), d.Day()) + "&"
+				result += tag + "=" + fmt.Sprintf("%d-%02d-%02d", d.Year(), d.Month(), d.Day()) + "&"
 			}
 
 		case "[]string":
 			if value.Len() > 0 {
-				result += formatSlice(field.Tag.Get("query"), value) + "&"
+				result += formatSlice(tag, value) + "&"
 			}
 		}
 	}
@@ -68,7 +89,8 @@ func paramsToQuery(params interface{}) string {
 func formatSlice(tag string, s reflect.Value) string {
 	var result string
 
-	name, unwrap := parseSliceTag(tag)
+	name := getTagName(tag)
+	unwrap := hasTagOption(tag, _OPTION_UNWRAP)
 
 	if !unwrap {
 		result += name + "="
@@ -87,13 +109,22 @@ func formatSlice(tag string, s reflect.Value) string {
 	return result[:len(result)-1]
 }
 
-// parseSliceTag parse slice tag and return tag name and unwrap flag
-func parseSliceTag(tag string) (string, bool) {
-	if !strings.Contains(tag, ",unwrap") {
-		return tag, false
+// getTagOption extract option from tag
+func hasTagOption(tag, option string) bool {
+	if !strings.Contains(tag, ",") {
+		return false
 	}
 
-	return tag[:strings.Index(tag, ",")], true
+	return tag[strings.Index(tag, ",")+1:] == option
+}
+
+// getTagName return tag name
+func getTagName(tag string) string {
+	if !strings.Contains(tag, ",") {
+		return tag
+	}
+
+	return tag[:strings.Index(tag, ",")]
 }
 
 // esc escapes the string so it can be safely placed inside a URL query

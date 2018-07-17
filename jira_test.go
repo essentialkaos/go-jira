@@ -28,4 +28,11 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 	}
 
 	c.Assert(p.ToQuery(), Equals, `expand=test1%2Ctest2`)
+
+	p = PickerParams{
+		Query:        "ABCD",
+		ShowSubTasks: true,
+	}
+
+	c.Assert(p.ToQuery(), Equals, `query=ABCD&showSubTasks=true&showSubTaskParent=false`)
 }
