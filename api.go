@@ -85,7 +85,7 @@ type IssueFields struct {
 	Priority                      *Priority                  `json:"priority"`
 	Comments                      *CommentCollection         `json:"comment"`
 	Worklogs                      *WorklogCollection         `json:"worklog"`
-	Votes                         *Votes                     `json:"votes"`
+	Votes                         *VotesInfo                 `json:"votes"`
 	Status                        *Status                    `json:"status"`
 	Labels                        []string                   `json:"labels"`
 	Components                    []*Component               `json:"components"`
@@ -205,7 +205,7 @@ type LinkType struct {
 	Outward string `json:"outward"`
 }
 
-// RemoteLinkParams if params for fetching remote link info
+// RemoteLinkParams params for fetching remote link info
 type RemoteLinkParams struct {
 	GlobalID string `query:"globalId"`
 }
@@ -270,13 +270,22 @@ type FieldMetaValue struct {
 
 // PROJECTS ///////////////////////////////////////////////////////////////////////// //
 
+// CreateMetaParams params for fetching metadata for creating issues
+type CreateMetaParams struct {
+	ProjectIDs     []string `query:"projectIds"`
+	ProjectKeys    []string `query:"projectKeys"`
+	IssueTypeIDs   []string `query:"issuetypeIds"`
+	IssueTypeNames []string `query:"issuetypeNames"`
+}
+
 // Project contains info about project
 type Project struct {
-	ID       string           `json:"id"`
-	Name     string           `json:"name"`
-	Key      string           `json:"key"`
-	Category *ProjectCategory `json:"projectCategory"`
-	Avatars  *Avatars         `json:"avatarUrls"`
+	ID         string           `json:"id"`
+	Name       string           `json:"name"`
+	Key        string           `json:"key"`
+	Category   *ProjectCategory `json:"projectCategory"`
+	Avatars    *Avatars         `json:"avatarUrls"`
+	IssueTypes []*IssueType     `json:"issueTypes"`
 }
 
 // ProjectCategory contains info about project category
@@ -347,11 +356,20 @@ type Version struct {
 
 // VOTES //////////////////////////////////////////////////////////////////////////// //
 
-// Votes contains info about votes
-type Votes struct {
+// VotesInfo contains info about votes
+type VotesInfo struct {
 	Votes    int     `json:"votes"`
 	HasVoted bool    `json:"hasVoted"`
 	Voters   []*User `json:"voters"`
+}
+
+// WATCHERS ///////////////////////////////////////////////////////////////////////// //
+
+// WatchersInfo contains info about watchers
+type WatchersInfo struct {
+	IsWatching bool    `json:"isWatching"`
+	WatchCount int     `json:"watchCount"`
+	Watchers   []*User `json:"watchers"`
 }
 
 // WORK LOG ///////////////////////////////////////////////////////////////////////// //
@@ -361,7 +379,7 @@ type WorklogCollection struct {
 	StartAt    int        `json:"startAt"`
 	MaxResults int        `json:"maxResults"`
 	Total      int        `json:"total"`
-	Data       []*Worklog `json:"worklogs"`
+	Worklogs   []*Worklog `json:"worklogs"`
 }
 
 // Worklog is worklog record
@@ -452,6 +470,11 @@ func (p IssueParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p RemoteLinkParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p CreateMetaParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 

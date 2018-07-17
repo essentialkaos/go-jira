@@ -118,7 +118,7 @@ func (api *API) GetComments(issueIDOrKey string, params ExpandParameters) (*Comm
 	return result, nil
 }
 
-// GetComment return comment for an issue
+// GetComment returns comment for an issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3987
 func (api *API) GetComment(issueIDOrKey, commentID string, params ExpandParameters) (*Comment, error) {
 	result := &Comment{}
@@ -160,7 +160,7 @@ func (api *API) GetIssueMeta(issueIDOrKey string) (*IssueMeta, error) {
 	return result, nil
 }
 
-// GetRemoteLinks return sub-resource representing the remote issue links on the issue
+// GetRemoteLinks returns sub-resource representing the remote issue links on the issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4385
 func (api *API) GetRemoteLinks(issueIDOrKey string, params RemoteLinkParams) ([]*RemoteLink, error) {
 	result := []*RemoteLink{}
@@ -185,7 +185,7 @@ func (api *API) GetRemoteLinks(issueIDOrKey string, params RemoteLinkParams) ([]
 	return result, nil
 }
 
-// GetRemoteLink return remote issue link with the given id on the issue
+// GetRemoteLink returns remote issue link with the given id on the issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4478
 func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) {
 	result := &RemoteLink{}
@@ -212,7 +212,7 @@ func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) 
 	return result, nil
 }
 
-// GetTransitions return a list of the transitions possible for this issue by the current user,
+// GetTransitions returns a list of the transitions possible for this issue by the current user,
 // along with fields that are required and their types
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4051
 func (api *API) GetTransitions(issueIDOrKey string, params TransitionsParams) ([]*Transition, error) {
@@ -237,10 +237,10 @@ func (api *API) GetTransitions(issueIDOrKey string, params TransitionsParams) ([
 	return result.Transitions, nil
 }
 
-// GetVotes return sub-resource representing the voters on the issue
+// GetVotes returns sub-resource representing the voters on the issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4143
-func (api *API) GetVotes(issueIDOrKey string) (*Votes, error) {
-	result := &Votes{}
+func (api *API) GetVotes(issueIDOrKey string) (*VotesInfo, error) {
+	result := &VotesInfo{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/votes",
 		EmptyParameters{}, &result, nil,
@@ -256,6 +256,95 @@ func (api *API) GetVotes(issueIDOrKey string) (*Votes, error) {
 	}
 
 	return result, nil
+}
+
+// GetWatchers returns the list of watchers for the issue with the given key
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4232
+func (api *API) GetWatchers(issueIDOrKey string) (*WatchersInfo, error) {
+	result := &WatchersInfo{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/watchers",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetWorklogs returns all work logs for an issue
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4232
+func (api *API) GetWorklogs(issueIDOrKey string) (*WorklogCollection, error) {
+	result := &WorklogCollection{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/worklog",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetWorklog returns a specific worklog
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4611
+func (api *API) GetWorklog(issueIDOrKey, worklogID string) (*Worklog, error) {
+	result := &Worklog{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/worklog/"+worklogID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetCreateMeta returns the meta data for creating issues. This includes
+// the available projects, issue types and fields, including field types
+// and whether or not those fields are required. Projects will not be returned
+// if the user does not have permission to create issues in that project.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4330
+func (api *API) GetCreateMeta(params CreateMetaParams) ([]*Project, error) {
+	result := &struct {
+		Projects []*Project `json:"projects"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/createmeta",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result.Projects, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
