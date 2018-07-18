@@ -304,6 +304,14 @@ type ProjectCategory struct {
 	Description string `json:"description"`
 }
 
+// PROPERTY ///////////////////////////////////////////////////////////////////////// //
+
+// Property contains info about property
+type Property struct {
+	Key   string            `json:"key"`
+	Value map[string]string `json:"value"`
+}
+
 // STATUS  ////////////////////////////////////////////////////////////////////////// //
 
 // Status contains info about issue status

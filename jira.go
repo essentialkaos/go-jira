@@ -372,6 +372,121 @@ func (api *API) Picker(params PickerParams) ([]*PickerSection, error) {
 	return result.Sections, nil
 }
 
+// GetIssueProperties returns the keys of all properties for the issue identified by
+// the key or by the id
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4856
+func (api *API) GetIssueProperties(issueIDOrKey string) ([]*Property, error) {
+	result := &struct {
+		Keys []*Property `json:"keys"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/properties",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result.Keys, nil
+}
+
+// SetIssueProperty sets the value of the specified issue's property
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4889
+func (api *API) SetIssueProperty(issueIDOrKey string, prop *Property) error {
+	statusCode, err := api.doRequest(
+		"PUT", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+prop.Key,
+		EmptyParameters{}, nil, prop,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case 400:
+		return ErrInvalidInput
+	case 401:
+		return ErrNoAuth
+	case 403:
+		return ErrNoPerms
+	case 404:
+		return ErrNoContent
+	}
+
+	return nil
+}
+
+// GetIssueProperty returns the value of the property with a given key from the issue
+// identified by the key or by the id. The user who retrieves the property is
+// required to have permissions to read the issue.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4911
+func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error) {
+	result := &struct {
+		Value *Property `json:"value"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result.Value, nil
+}
+
+// DeleteIssueProperty removes the property from the issue identified by the key
+// or by the id. Ths user removing the property is required to have permissions
+// to edit the issue.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4937
+func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
+	statusCode, err := api.doRequest(
+		"DELETE", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey,
+		EmptyParameters{}, nil, nil,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case 400:
+		return ErrInvalidInput
+	case 401:
+		return ErrNoAuth
+	case 403:
+		return ErrNoPerms
+	case 404:
+		return ErrNoContent
+	}
+
+	return nil
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
@@ -426,6 +541,7 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 	}
 
 	if method != "GET" {
+		req.Header.SetContentType("application/json")
 		req.Header.SetMethod(method)
 	}
 
