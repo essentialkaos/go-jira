@@ -40,7 +40,7 @@ var (
 	ErrWrongLinkID       = errors.New("LinkId is not a valid number, or the remote issue link with the given id does not belong to the given issue")
 	ErrNoAuth            = errors.New("Calling user is not authenticated")
 	ErrNoContent         = errors.New("There is no content with the given ID, or the calling user does not have permission to view the content")
-	ErrGenError          = errors.New("Error occurs while generating the response")
+	ErrGenReponse        = errors.New("Error occurs while generating the response")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -547,7 +547,7 @@ func (api *API) GetIssueLink(linkID string) (*Link, error) {
 	case 404:
 		return nil, ErrNoContent
 	case 500:
-		return nil, ErrGenError
+		return nil, ErrGenReponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -696,7 +696,7 @@ func (api *API) GetAutocompleteData() (*AutocompleteData, error) {
 	case 404:
 		return nil, ErrNoContent
 	case 500:
-		return nil, ErrGenError
+		return nil, ErrGenReponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
