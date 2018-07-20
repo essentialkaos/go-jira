@@ -521,6 +521,35 @@ func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
 	}
 }
 
+// GetIssueLink returns an issue link with the specified id
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3334
+func (api *API) GetIssueLink(linkID string) (*Link, error) {
+	result := &Link{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issueLink/"+linkID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
