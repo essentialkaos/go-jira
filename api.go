@@ -93,6 +93,7 @@ type IssueFields struct {
 	SubTasks                      []*Issue                   `json:"subtasks"`
 	Versions                      []*Version                 `json:"versions"`
 	FixVersions                   []*Version                 `json:"fixVersions"`
+	Issuelinks                    []*Link                    `json:"issuelinks"`
 	Custom                        map[string]json.RawMessage `json:"-"`
 }
 
@@ -201,9 +202,10 @@ type Comment struct {
 
 // Link contains info about link
 type Link struct {
-	ID          string    `json:"id"`
-	Type        *LinkType `json:"type"`
-	InwardIssue *Issue    `json:"inwardIssue"`
+	ID           string    `json:"id"`
+	Type         *LinkType `json:"type"`
+	InwardIssue  *Issue    `json:"inwardIssue"`
+	OutwardIssue *Issue    `json:"outwardIssue"`
 }
 
 // LinkType contains info about link type
