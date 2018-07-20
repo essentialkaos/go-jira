@@ -90,11 +90,13 @@ func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetComments returns all comments for an issue
@@ -111,11 +113,13 @@ func (api *API) GetComments(issueIDOrKey string, params ExpandParameters) (*Comm
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetComment returns comment for an issue
@@ -132,11 +136,13 @@ func (api *API) GetComment(issueIDOrKey, commentID string, params ExpandParamete
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetIssueMeta returns the meta data for editing an issue
@@ -153,11 +159,13 @@ func (api *API) GetIssueMeta(issueIDOrKey string) (*IssueMeta, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetRemoteLinks returns sub-resource representing the remote issue links on the issue
@@ -174,15 +182,17 @@ func (api *API) GetRemoteLinks(issueIDOrKey string, params RemoteLinkParams) ([]
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 401:
 		return nil, ErrNoAuth
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetRemoteLink returns remote issue link with the given id on the issue
@@ -199,6 +209,8 @@ func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) 
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 400:
 		return nil, ErrWrongLinkID
 	case 401:
@@ -207,9 +219,9 @@ func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) 
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetTransitions returns a list of the transitions possible for this issue by the current user,
@@ -230,11 +242,13 @@ func (api *API) GetTransitions(issueIDOrKey string, params TransitionsParams) ([
 	}
 
 	switch statusCode {
+	case 200:
+		return result.Transitions, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result.Transitions, nil
 }
 
 // GetVotes returns sub-resource representing the voters on the issue
@@ -251,11 +265,13 @@ func (api *API) GetVotes(issueIDOrKey string) (*VotesInfo, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetWatchers returns the list of watchers for the issue with the given key
@@ -272,11 +288,13 @@ func (api *API) GetWatchers(issueIDOrKey string) (*WatchersInfo, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetWorklogs returns all work logs for an issue
@@ -293,11 +311,13 @@ func (api *API) GetWorklogs(issueIDOrKey string) (*WorklogCollection, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetWorklog returns a specific worklog
@@ -314,11 +334,13 @@ func (api *API) GetWorklog(issueIDOrKey, worklogID string) (*Worklog, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetCreateMeta returns the meta data for creating issues. This includes
@@ -340,11 +362,13 @@ func (api *API) GetCreateMeta(params CreateMetaParams) ([]*Project, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result.Projects, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result.Projects, nil
 }
 
 // Picker returns suggested issues which match the auto-completion query for the
@@ -365,11 +389,13 @@ func (api *API) Picker(params PickerParams) ([]*PickerSection, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result.Sections, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result.Sections, nil
 }
 
 // GetIssueProperties returns the keys of all properties for the issue identified by
@@ -389,6 +415,8 @@ func (api *API) GetIssueProperties(issueIDOrKey string) ([]*Property, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result.Keys, nil
 	case 400:
 		return nil, ErrInvalidInput
 	case 401:
@@ -397,9 +425,9 @@ func (api *API) GetIssueProperties(issueIDOrKey string) ([]*Property, error) {
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result.Keys, nil
 }
 
 // SetIssueProperty sets the value of the specified issue's property
@@ -415,6 +443,8 @@ func (api *API) SetIssueProperty(issueIDOrKey string, prop *Property) error {
 	}
 
 	switch statusCode {
+	case 200:
+		return nil
 	case 400:
 		return ErrInvalidInput
 	case 401:
@@ -423,9 +453,9 @@ func (api *API) SetIssueProperty(issueIDOrKey string, prop *Property) error {
 		return ErrNoPerms
 	case 404:
 		return ErrNoContent
+	default:
+		return makeUnknownError(statusCode)
 	}
-
-	return nil
 }
 
 // GetIssueProperty returns the value of the property with a given key from the issue
@@ -446,6 +476,8 @@ func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error
 	}
 
 	switch statusCode {
+	case 200:
+		return result.Value, nil
 	case 400:
 		return nil, ErrInvalidInput
 	case 401:
@@ -454,9 +486,9 @@ func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result.Value, nil
 }
 
 // DeleteIssueProperty removes the property from the issue identified by the key
@@ -474,6 +506,8 @@ func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
 	}
 
 	switch statusCode {
+	case 200:
+		return nil
 	case 400:
 		return ErrInvalidInput
 	case 401:
@@ -482,9 +516,9 @@ func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
 		return ErrNoPerms
 	case 404:
 		return ErrNoContent
+	default:
+		return makeUnknownError(statusCode)
 	}
-
-	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -573,4 +607,9 @@ func getUserAgent(app, version string) string {
 // genBasicAuthHeader generate basic auth header
 func genBasicAuthHeader(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(username + ":" + password))
+}
+
+// makeUnknownError create error struct for unknown error
+func makeUnknownError(statusCode int) error {
+	return fmt.Errorf("Unknown error occurred (status code %d)", statusCode)
 }
