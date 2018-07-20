@@ -40,6 +40,7 @@ var (
 	ErrWrongLinkID       = errors.New("LinkId is not a valid number, or the remote issue link with the given id does not belong to the given issue")
 	ErrNoAuth            = errors.New("Calling user is not authenticated")
 	ErrNoContent         = errors.New("There is no content with the given ID, or the calling user does not have permission to view the content")
+	ErrGenError          = errors.New("Error occurs while generating the response")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -545,6 +546,157 @@ func (api *API) GetIssueLink(linkID string) (*Link, error) {
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	case 500:
+		return nil, ErrGenError
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetIssueLinkTypes returns a list of available issue link types, if issue
+// linking is enabled. Each issue link type has an id, a name and a label
+// for the outward and inward link relationship.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4959
+func (api *API) GetIssueLinkTypes() ([]*LinkType, error) {
+	result := &struct {
+		IssueLinkTypes []*LinkType `json:"issueLinkTypes"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issueLinkType",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.IssueLinkTypes, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetIssueLinkType returns for a given issue link type id all information about
+// this issue link type
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5004
+func (api *API) GetIssueLinkType(linkTypeID string) (*LinkType, error) {
+	result := &LinkType{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issueLinkType/"+linkTypeID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetIssueTypes returns a list of all issue types visible to the user
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5567
+func (api *API) GetIssueTypes() ([]*IssueType, error) {
+	result := []*IssueType{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issuetype",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetIssueType returns a full representation of the issue type that has the given id
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5585
+func (api *API) GetIssueType(issueTypeID string) (*IssueType, error) {
+	result := &IssueType{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issuetype/"+issueTypeID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetIssueTypeAlternatives returns a list of all alternative issue types for
+// the given issue type id. The list will contain these issues types, to which
+// issues assigned to the given issue type can be migrated. The suitable alternatives
+// are issue types which are assigned to the same workflow, the same field configuration
+// and the same screen scheme.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5754
+func (api *API) GetIssueTypeAlternatives(issueTypeID string) ([]*IssueType, error) {
+	result := []*IssueType{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/issuetype/"+issueTypeID+"/alternatives",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetAutocompleteData returns the auto complete data required for JQL searches
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1819
+func (api *API) GetAutocompleteData() (*AutocompleteData, error) {
+	result := &AutocompleteData{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/jql/autocompletedata",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
+	case 500:
+		return nil, ErrGenError
 	default:
 		return nil, makeUnknownError(statusCode)
 	}

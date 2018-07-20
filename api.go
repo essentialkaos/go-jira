@@ -38,6 +38,35 @@ type Date struct {
 	time.Time
 }
 
+// AUTOCOMPLETE ///////////////////////////////////////////////////////////////////// //
+
+// AutocompleteData contains autocomplete data
+type AutocompleteData struct {
+	VisibleFieldNames    []*JQLField    `json:"visibleFieldNames"`
+	VisibleFunctionNames []*JQLFunction `json:"visibleFunctionNames"`
+	ReservedWords        []string       `json:"jqlReservedWords"`
+}
+
+// JQLField contains info about JQL field
+type JQLField struct {
+	Value       string   `json:"value"`
+	DisplayName string   `json:"displayName"`
+	CfID        string   `json:"cfid"`
+	Auto        string   `json:"auto"`
+	Orderable   string   `json:"orderable"`
+	Searchable  string   `json:"searchable"`
+	Operators   []string `json:"operators"`
+	Types       []string `json:"types"`
+}
+
+// JQLFunction contains info about JQL function
+type JQLFunction struct {
+	Value       string   `json:"value"`
+	DisplayName string   `json:"displayName"`
+	IsList      string   `json:"isList"`
+	Types       []string `json:"types"`
+}
+
 // ISSUES /////////////////////////////////////////////////////////////////////////// //
 
 // IssueParams is params for fetching issue info
