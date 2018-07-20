@@ -67,6 +67,20 @@ type JQLFunction struct {
 	Types       []string `json:"types"`
 }
 
+// SuggestionParams is params for fetching suggestions
+type SuggestionParams struct {
+	FieldName      string `query:"fieldName"`
+	FieldValue     string `query:"fieldValue"`
+	PredicateName  string `query:"predicateName"`
+	PredicateValue string `query:"predicateValue"`
+}
+
+// Suggestion contains suggestion info
+type Suggestion struct {
+	Value       string `json:"value"`
+	DisplayName string `json:"displayName"`
+}
+
 // ISSUES /////////////////////////////////////////////////////////////////////////// //
 
 // IssueParams is params for fetching issue info
@@ -549,6 +563,11 @@ func (p CreateMetaParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p PickerParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p SuggestionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 

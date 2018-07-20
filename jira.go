@@ -702,6 +702,29 @@ func (api *API) GetAutocompleteData() (*AutocompleteData, error) {
 	}
 }
 
+// GetAutocompleteSuggestions returns auto complete suggestions for JQL search
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1840
+func (api *API) GetAutocompleteSuggestions(params SuggestionParams) ([]Suggestion, error) {
+	result := &struct {
+		Result []Suggestion `json:"results"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/jql/autocompletedata/suggestions",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
