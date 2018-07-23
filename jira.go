@@ -60,8 +60,8 @@ func NewAPI(url, username, password string) (*API, error) {
 		Client: &fasthttp.Client{
 			Name:                getUserAgent("", ""),
 			MaxIdleConnDuration: 5 * time.Second,
-			ReadTimeout:         3 * time.Second,
-			WriteTimeout:        3 * time.Second,
+			ReadTimeout:         5 * time.Second,
+			WriteTimeout:        10 * time.Second,
 			MaxConnsPerHost:     150,
 		},
 
@@ -806,6 +806,104 @@ func (api *API) GetPriority(priorityID string) (*Priority, error) {
 	result := &Priority{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/priority/"+priorityID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProjects returns all projects which are visible for the currently
+// logged in user. If no user is logged in, it returns the list of projects
+// that are visible when using anonymous access.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3484
+func (api *API) GetProjects(params ExpandParameters) ([]*Project, error) {
+	result := []*Project{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 500:
+		return nil, ErrGenReponse
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProject returns a full representation of a project
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3509
+func (api *API) GetProject(projectIDOrKey string, params ExpandParameters) (*Project, error) {
+	result := &Project{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey,
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProjectAvatars returns all avatars which are visible for the currently logged
+// in user. The avatars are grouped into system and custom.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3555
+func (api *API) GetProjectAvatars(projectIDOrKey string) (*ProjectAvatars, error) {
+	result := &ProjectAvatars{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/avatars",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	case 500:
+		return nil, ErrGenReponse
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProjectComponents returns a full representation of a the specified
+// project's components
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3757
+func (api *API) GetProjectComponents(projectIDOrKey string) ([]*Component, error) {
+	result := []*Component{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/components",
 		EmptyParameters{}, &result, nil,
 	)
 

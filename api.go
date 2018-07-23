@@ -185,9 +185,16 @@ type TimeTracking struct {
 
 // Component contains info about component
 type Component struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	ID                  string `json:"id"`
+	Name                string `json:"name"`
+	Description         string `json:"description"`
+	assigneeType        string `json:"assigneeType"`
+	realAssigneeType    string `json:"realAssigneeType"`
+	Assignee            *User  `json:"assignee"`
+	RealAssignee        *User  `json:"realAssignee"`
+	IsAssigneeTypeValid bool   `json:"isAssigneeTypeValid"`
+	Project             string `json:"project"`
+	ProjectID           int    `json:"projectId"`
 }
 
 // Progress contains info about issue progress
@@ -364,12 +371,19 @@ type CreateMetaParams struct {
 
 // Project contains info about project
 type Project struct {
-	ID         string           `json:"id"`
-	Name       string           `json:"name"`
-	Key        string           `json:"key"`
-	Category   *ProjectCategory `json:"projectCategory"`
-	Avatars    *Avatars         `json:"avatarUrls"`
-	IssueTypes []*IssueType     `json:"issueTypes"`
+	ID           string            `json:"id"`
+	Name         string            `json:"name"`
+	Key          string            `json:"key"`
+	URL          string            `json:"url"`
+	AssigneeType string            `json:"assigneeType"`
+	Lead         *User             `json:"lead"`
+	Category     *ProjectCategory  `json:"projectCategory"`
+	Avatars      *Avatars          `json:"avatarUrls"`
+	ProjectKeys  []string          `json:"projectKeys"`
+	IssueTypes   []*IssueType      `json:"issueTypes"`
+	Versions     []*Version        `json:"versions"`
+	Components   []*Component      `json:"components"`
+	Roles        map[string]string `json:"roles"`
 }
 
 // ProjectCategory contains info about project category
@@ -377,6 +391,20 @@ type ProjectCategory struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+// ProjectAvatars contains info about project avatars
+type ProjectAvatars struct {
+	System []*ProjectAvatar `json:"system"`
+	Custom []*ProjectAvatar `json:"custom"`
+}
+
+// ProjectAvatar contains info about project avatar
+type ProjectAvatar struct {
+	ID             string   `json:"id"`
+	IsSystemAvatar bool     `json:"isSystemAvatar"`
+	IsSelected     bool     `json:"isSelected"`
+	Avatars        *Avatars `json:"urls"`
 }
 
 // PROPERTY ///////////////////////////////////////////////////////////////////////// //
@@ -452,6 +480,7 @@ type Version struct {
 	Description string `json:"description"`
 	IsArchived  bool   `json:"archived"`
 	IsReleased  bool   `json:"released"`
+	ProjectID   int    `json:"projectId"`
 }
 
 // VOTES //////////////////////////////////////////////////////////////////////////// //
