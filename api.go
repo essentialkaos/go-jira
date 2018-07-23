@@ -443,7 +443,7 @@ type TransitionsParams struct {
 	Expand       []string `query:"expand"`
 }
 
-// Transition contains info about transistion
+// Transition contains info about transition
 type Transition struct {
 	ID     string                `json:"id"`
 	Name   string                `json:"name"`
