@@ -944,7 +944,31 @@ func (api *API) GetProjectStatuses(projectIDOrKey string) ([]*IssueType, error) 
 	}
 }
 
+// GetProjectVersions returns the keys of all properties for the project identified
+// by the key or by the id
+func (api *API) GetProjectVersions(projectIDOrKey string, params ExpandParameters) ([]*Version, error) {
+	result := []*Version{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/versions",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetProjectVersion returns all versions for the specified project
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3723
 func (api *API) GetProjectVersion(projectIDOrKey string, params VersionParams) (*VersionCollection, error) {
 	result := &VersionCollection{}
 	statusCode, err := api.doRequest(
