@@ -921,6 +921,51 @@ func (api *API) GetProjectComponents(projectIDOrKey string) ([]*Component, error
 	}
 }
 
+// GetProjectStatuses returns all issue types with valid status values for a project
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3534
+func (api *API) GetProjectStatuses(projectIDOrKey string) ([]*IssueType, error) {
+	result := []*IssueType{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/statuses",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProjectVersion returns all versions for the specified project
+func (api *API) GetProjectVersion(projectIDOrKey string, params VersionParams) (*VersionCollection, error) {
+	result := &VersionCollection{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/version",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]

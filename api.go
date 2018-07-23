@@ -151,12 +151,13 @@ type IssueInfo struct {
 
 // IssueType contains info about issue type
 type IssueType struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	IconURL     string `json:"iconUrl"`
-	AvatarID    int    `json:"avatarId"`
-	IsSubTask   bool   `json:"subtask"`
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	IconURL     string    `json:"iconUrl"`
+	AvatarID    int       `json:"avatarId"`
+	IsSubTask   bool      `json:"subtask"`
+	Statuses    []*Status `json:"statuses"`
 }
 
 // Priority contains priority info
@@ -473,6 +474,23 @@ type UserGroups struct {
 
 // VERSIONS ///////////////////////////////////////////////////////////////////////// //
 
+// VersionParams contains params for fetching version data
+type VersionParams struct {
+	StartAt    int      `query:"startAt"`
+	MaxResults int      `query:"maxResults"`
+	OrderBy    string   `query:"orderBy"`
+	Expand     []string `query:"expand"`
+}
+
+// VersionCollection is version collection
+type VersionCollection struct {
+	StartAt    int        `json:"startAt"`
+	MaxResults int        `json:"maxResults"`
+	Total      int        `json:"total"`
+	IsLast     bool       `json:"isLast"`
+	Data       []*Version `json:"values"`
+}
+
 // Version contains version info
 type Version struct {
 	ID          string `json:"id"`
@@ -645,5 +663,10 @@ func (p SuggestionParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p TransitionsParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p VersionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
