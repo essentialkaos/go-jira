@@ -290,6 +290,13 @@ type RemoteLinkIcon struct {
 	URL string `json:"url16x16"`
 }
 
+// GROUPS /////////////////////////////////////////////////////////////////////////// //
+
+// Group contains info about user group
+type Group struct {
+	Name string `json:"name"`
+}
+
 // META ///////////////////////////////////////////////////////////////////////////// //
 
 // IssueMeta contains meta data for editing an issue
@@ -320,6 +327,27 @@ type FieldMetaValue struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+// PERMISSIONS ////////////////////////////////////////////////////////////////////// //
+
+// PermissionsParams is params for fetching parmissions info
+type PermissionsParams struct {
+	ProjectKey string `query:"projectKey"`
+	ProjectId  string `query:"projectId"`
+	IssueKey   string `query:"issueKey"`
+	IssueId    string `query:"issueId"`
+}
+
+// Permission contains info about permission
+type Permission struct {
+	ID             string `json:"id"`
+	Key            string `json:"key"`
+	Name           string `json:"name"`
+	Type           string `json:"type"`
+	Description    string `json:"description"`
+	HavePermission bool   `json:"havePermission"`
+	DeprecatedKey  bool   `json:"deprecatedKey"`
 }
 
 // PROJECTS ///////////////////////////////////////////////////////////////////////// //
@@ -396,13 +424,21 @@ type Transition struct {
 
 // User contains user info
 type User struct {
-	Avatars     *Avatars `json:"avatarUrls"`
-	Name        string   `json:"name"`
-	Key         string   `json:"key"`
-	Email       string   `json:"emailAddress"`
-	DisplayName string   `json:"displayName"`
-	TimeZone    string   `json:"timeZone"`
-	Active      bool     `json:"active"`
+	Avatars     *Avatars    `json:"avatarUrls"`
+	Name        string      `json:"name"`
+	Key         string      `json:"key"`
+	Email       string      `json:"emailAddress"`
+	DisplayName string      `json:"displayName"`
+	TimeZone    string      `json:"timeZone"`
+	Locale      string      `json:"locale"`
+	Active      bool        `json:"active"`
+	Groups      *UserGroups `json:"groups"`
+}
+
+// UserGroups contains info about user groups
+type UserGroups struct {
+	Size  int      `json:"size"`
+	Items []*Group `json:"items"`
 }
 
 // VERSIONS ///////////////////////////////////////////////////////////////////////// //
@@ -558,6 +594,11 @@ func (p RemoteLinkParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p CreateMetaParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p PermissionsParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 

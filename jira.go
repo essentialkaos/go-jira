@@ -725,6 +725,60 @@ func (api *API) GetAutocompleteSuggestions(params SuggestionParams) ([]Suggestio
 	}
 }
 
+// GetMyPermissions returns all permissions in the system and whether the currently
+// logged in user has them. You can optionally provide a specific context to get
+// permissions for (projectKey OR projectId OR issueKey OR issueId)
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5925
+func (api *API) GetMyPermissions(params PermissionsParams) (map[string]*Permission, error) {
+	result := &struct {
+		Permissions map[string]*Permission `json:"permissions"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/mypermissions",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Permissions, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetMyself returns currently logged user
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1107
+func (api *API) GetMyself() (*User, error) {
+	result := &User{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/myself",
+		ExpandParameters{[]string{"groups"}}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
