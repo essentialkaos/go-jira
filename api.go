@@ -161,9 +161,11 @@ type IssueType struct {
 
 // Priority contains priority info
 type Priority struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	IconURL string `json:"iconUrl"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	IconURL     string `json:"iconUrl"`
+	Description string `json:"description"`
+	StatusColor string `json:"statusColor"`
 }
 
 // Resolution contains resolution info

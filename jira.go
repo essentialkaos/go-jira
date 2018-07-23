@@ -779,6 +779,50 @@ func (api *API) GetMyself() (*User, error) {
 	}
 }
 
+// GetPriorities returns a list of all issue priorities
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2804
+func (api *API) GetPriorities() ([]*Priority, error) {
+	result := []*Priority{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/priority",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetPriority returns an issue priority
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2822
+func (api *API) GetPriority(priorityID string) (*Priority, error) {
+	result := &Priority{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/priority/"+priorityID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
