@@ -444,7 +444,7 @@ func (api *API) SetIssueProperty(issueIDOrKey string, prop *Property) error {
 	}
 
 	switch statusCode {
-	case 200:
+	case 200, 201:
 		return nil
 	case 400:
 		return ErrInvalidInput
@@ -507,7 +507,7 @@ func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
 	}
 
 	switch statusCode {
-	case 200:
+	case 204:
 		return nil
 	case 400:
 		return ErrInvalidInput
@@ -987,6 +987,129 @@ func (api *API) GetProjectVersion(projectIDOrKey string, params VersionParams) (
 		return nil, ErrNoContent
 	default:
 		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProjectProperties returns the keys of all properties for the project identified
+// by the key or by the id
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e881
+func (api *API) GetProjectProperties(projectIDOrKey string) ([]*Property, error) {
+	result := &struct {
+		Keys []*Property `json:"keys"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/properties",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Keys, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// SetProjectProperty sets the value of the specified project's property
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e914
+func (api *API) SetProjectProperty(projectIDOrKey string, prop *Property) error {
+	statusCode, err := api.doRequest(
+		"PUT", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+prop.Key,
+		EmptyParameters{}, nil, prop,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case 200, 201:
+		return nil
+	case 400:
+		return ErrInvalidInput
+	case 401:
+		return ErrNoAuth
+	case 403:
+		return ErrNoPerms
+	case 404:
+		return ErrNoContent
+	default:
+		return makeUnknownError(statusCode)
+	}
+}
+
+// GetProjectProperty returns the value of the property with a given key from the project
+// identified by the key or by the id. The user who retrieves the property is required
+// to have permissions to read the project.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e936
+func (api *API) GetProjectProperty(projectIDOrKey, propKey string) (*Property, error) {
+	result := &struct {
+		Value *Property `json:"value"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Value, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// DeleteProjectProperty removes the property from the project identified by the key
+// or by the id. Ths user removing the property is required to have permissions to
+// administer the project.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e962
+func (api *API) DeleteProjectProperty(projectIDOrKey, propKey string) error {
+	statusCode, err := api.doRequest(
+		"DELETE", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey,
+		EmptyParameters{}, nil, nil,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case 204:
+		return nil
+	case 400:
+		return ErrInvalidInput
+	case 401:
+		return ErrNoAuth
+	case 403:
+		return ErrNoPerms
+	case 404:
+		return ErrNoContent
+	default:
+		return makeUnknownError(statusCode)
 	}
 }
 
