@@ -416,6 +416,25 @@ type Property struct {
 	Value map[string]string `json:"value"`
 }
 
+// ROLES //////////////////////////////////////////////////////////////////////////// //
+
+// Role contains info about role
+type Role struct {
+	ID          int      `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Actors      []*Actor `json:"actors"`
+}
+
+// Actor contains info about role actor
+type Actor struct {
+	ID          int    `json:"id"`
+	Type        string `json:"type"`
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+	AvatarUrl   string `json:"avatarUrl"`
+}
+
 // STATUS  ////////////////////////////////////////////////////////////////////////// //
 
 // Status contains info about issue status

@@ -1113,6 +1113,52 @@ func (api *API) DeleteProjectProperty(projectIDOrKey, propKey string) error {
 	}
 }
 
+// GetProjectRoles returns a list of roles in this project with links to full details
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4690
+func (api *API) GetProjectRoles(projectIDOrKey string) (map[string]string, error) {
+	result := make(map[string]string)
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/role",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProjectRole return details on a given project role
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e936
+func (api *API) GetProjectRole(projectIDOrKey, roleID string) (*Role, error) {
+	result := &Role{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/project/"+projectIDOrKey+"/role/"+roleID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
