@@ -167,6 +167,75 @@ func (api *API) GetFields() ([]*Field, error) {
 	}
 }
 
+// GetFilter returns a filter given an id
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2491
+func (api *API) GetFilter(filterID string, params ExpandParameters) (*Filter, error) {
+	result := &Filter{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/filter/"+filterID,
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return nil, ErrInvalidInput
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetFilterDefaultScope returns the default share scope of the logged-in user
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2616
+func (api *API) GetFilterDefaultScope() (string, error) {
+	result := &struct {
+		Scope string `json:"scope"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/filter/defaultShareScope",
+		EmptyParameters{}, result, nil,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Scope, nil
+	case 400:
+		return "", ErrGenReponse
+	default:
+		return "", makeUnknownError(statusCode)
+	}
+}
+
+// GetFilterFavourites returns the favourite filters of the logged-in user
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2597
+func (api *API) GetFilterFavourites(params ExpandParameters) ([]*Filter, error) {
+	result := []*Filter{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/filter/favourite",
+		params, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetIssue returns a full representation of the issue for the given issue key
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4164
 func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error) {

@@ -297,6 +297,55 @@ type Comment struct {
 	UpdateAuthor *User  `json:"updateAuthor"`
 }
 
+// FILTERS ////////////////////////////////////////////////////////////////////////// //
+
+// Filter contains info about filter
+type Filter struct {
+	ID               string                   `json:"id"`
+	Name             string                   `json:"name"`
+	Description      string                   `json:"description"`
+	JQL              string                   `json:"jql"`
+	ViewURL          string                   `json:"viewUrl"`
+	SearchURL        string                   `json:"searchUrl"`
+	IsFavourite      bool                     `json:"favourite"`
+	Owner            *User                    `json:"owner"`
+	SharedUsers      *FilterShares            `json:"sharedUsers"`
+	Subscriptions    *FilterSubscriptions     `json:"subscriptions"`
+	SharePermissions []*FilterSharePermission `json:"sharePermissions"`
+}
+
+// FilterSharePermission contains info about share permission
+type FilterSharePermission struct {
+	ID      int      `json:"id"`
+	Type    string   `json:"type"`
+	Project *Project `json:"project"`
+	Group   *Group   `json:"group"`
+}
+
+// FilterShares contains info about filter shares
+type FilterShares struct {
+	Size       int     `json:"size"`
+	MaxResults int     `json:"max-results"`
+	StartIndex int     `json:"start-index"`
+	EndIndex   int     `json:"end-index"`
+	Items      []*User `json:"items"`
+}
+
+// FilterSubscriptions contains info about filter subscriptions
+type FilterSubscriptions struct {
+	Size       int                   `json:"size"`
+	MaxResults int                   `json:"max-results"`
+	StartIndex int                   `json:"start-index"`
+	EndIndex   int                   `json:"end-index"`
+	Items      []*FilterSubscription `json:"items"`
+}
+
+// FilterSubscription contains info about filter subscription
+type FilterSubscription struct {
+	ID   int   `json:"id"`
+	User *User `json:"user"`
+}
+
 // LINKS //////////////////////////////////////////////////////////////////////////// //
 
 // Link contains info about link
