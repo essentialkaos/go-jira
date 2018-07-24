@@ -81,6 +81,28 @@ type Suggestion struct {
 	DisplayName string `json:"displayName"`
 }
 
+// CONFIGURATION //////////////////////////////////////////////////////////////////// //
+
+// Configuration contains info about optional features
+type Configuration struct {
+	VotingEnabled             bool                       `json:"votingEnabled"`
+	WatchingEnabled           bool                       `json:"watchingEnabled"`
+	UnassignedIssuesAllowed   bool                       `json:"unassignedIssuesAllowed"`
+	SubTasksEnabled           bool                       `json:"subTasksEnabled"`
+	IssueLinkingEnabled       bool                       `json:"issueLinkingEnabled"`
+	TimeTrackingEnabled       bool                       `json:"timeTrackingEnabled"`
+	AttachmentsEnabled        bool                       `json:"attachmentsEnabled"`
+	TimeTrackingConfiguration *TimeTrackingConfiguration `json:"timeTrackingConfiguration"`
+}
+
+// TimeTrackingConfiguration contains detailed info about time tracking configuration
+type TimeTrackingConfiguration struct {
+	WorkingHoursPerDay float64 `json:"workingHoursPerDay"`
+	WorkingDaysPerWeek float64 `json:"workingDaysPerWeek"`
+	TimeFormat         string  `json:"timeFormat"`
+	DefaultUnit        string  `json:"defaultUnit"`
+}
+
 // ISSUES /////////////////////////////////////////////////////////////////////////// //
 
 // IssueParams is params for fetching issue info

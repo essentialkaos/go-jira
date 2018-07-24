@@ -77,6 +77,31 @@ func (api *API) SetUserAgent(app, version string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// GetConfiguration returns the information if the optional features in JIRA are
+// enabled or disabled. If the time tracking is enabled, it also returns the detailed
+// information about time tracking configuration.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3775
+func (api *API) GetConfiguration() (*Configuration, error) {
+	result := &Configuration{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/configuration",
+		EmptyParameters{}, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 403:
+		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetIssue returns a full representation of the issue for the given issue key
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4164
 func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error) {
@@ -1229,6 +1254,97 @@ func (api *API) ValidateProjectKey(projectKey string) error {
 		}
 	default:
 		return makeUnknownError(statusCode)
+	}
+}
+
+// GetResolutions returns a list of all resolutions
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e842
+func (api *API) GetResolutions() ([]*Resolution, error) {
+	result := []*Resolution{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/resolution",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetResolution returns a resolution
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e860
+func (api *API) GetResolution(resolutionID string) (*Resolution, error) {
+	result := &Resolution{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/resolution/"+resolutionID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetRoles returns all the ProjectRoles available in JIRA. Currently this list
+// is global.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2767
+func (api *API) GetRoles() ([]*Role, error) {
+	result := []*Role{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/role",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetRole returns a specific ProjectRole available in JIRA
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2786
+func (api *API) GetRole(roleID string) (*Role, error) {
+	result := &Role{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/role/"+roleID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
 }
 
