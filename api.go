@@ -211,8 +211,8 @@ type Component struct {
 	ID                  string `json:"id"`
 	Name                string `json:"name"`
 	Description         string `json:"description"`
-	assigneeType        string `json:"assigneeType"`
-	realAssigneeType    string `json:"realAssigneeType"`
+	AssigneeType        string `json:"assigneeType"`
+	RealAssigneeType    string `json:"realAssigneeType"`
 	Assignee            *User  `json:"assignee"`
 	RealAssignee        *User  `json:"realAssignee"`
 	IsAssigneeTypeValid bool   `json:"isAssigneeTypeValid"`
@@ -366,9 +366,9 @@ type FieldMetaValue struct {
 // PermissionsParams is params for fetching parmissions info
 type PermissionsParams struct {
 	ProjectKey string `query:"projectKey"`
-	ProjectId  string `query:"projectId"`
+	ProjectID  string `query:"projectId"`
 	IssueKey   string `query:"issueKey"`
-	IssueId    string `query:"issueId"`
+	IssueID    string `query:"issueId"`
 }
 
 // Permission contains info about permission
@@ -454,7 +454,7 @@ type Actor struct {
 	Type        string `json:"type"`
 	Name        string `json:"name"`
 	DisplayName string `json:"displayName"`
-	AvatarUrl   string `json:"avatarUrl"`
+	AvatarURL   string `json:"avatarUrl"`
 }
 
 // STATUS  ////////////////////////////////////////////////////////////////////////// //
@@ -480,7 +480,7 @@ type StatusCategory struct {
 
 // TransitionsParams is params for fetching transitions info
 type TransitionsParams struct {
-	TransitionId string   `query:"transitionId"`
+	TransitionID string   `query:"transitionId"`
 	Expand       []string `query:"expand"`
 }
 

@@ -1247,11 +1247,10 @@ func (api *API) ValidateProjectKey(projectKey string) error {
 
 	switch statusCode {
 	case 200:
-		if len(result.Errors) == 0 {
-			return nil
-		} else {
+		if len(result.Errors) != 0 {
 			return errors.New(result.Errors["projectKey"])
 		}
+		return nil
 	default:
 		return makeUnknownError(statusCode)
 	}
