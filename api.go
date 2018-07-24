@@ -677,8 +677,8 @@ type Worklog struct {
 
 // PICKER /////////////////////////////////////////////////////////////////////////// //
 
-// PickerParams is params for fetching data from issue picker
-type PickerParams struct {
+// IssuePickerParams is params for fetching data from issue picker
+type IssuePickerParams struct {
 	Query             string `query:"query"`
 	CurrentJQL        string `query:"currentJQL"`
 	CurrentIssueKey   string `query:"currentIssueKey"`
@@ -687,8 +687,8 @@ type PickerParams struct {
 	ShowSubTaskParent bool   `query:"showSubTaskParent,respect"`
 }
 
-// PickerSection contains picker response data
-type PickerSection struct {
+// IssuePickerSection contains picker response data
+type IssuePickerSection struct {
 	Label  string       `json:"label"`
 	Sub    string       `json:"sub"`
 	ID     string       `json:"id"`
@@ -766,6 +766,11 @@ func (p ExpandParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p DashboardParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p GroupParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 

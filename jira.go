@@ -531,13 +531,13 @@ func (api *API) GetCreateMeta(params CreateMetaParams) ([]*Project, error) {
 	}
 }
 
-// Picker returns suggested issues which match the auto-completion query for the
+// IssuePicker returns suggested issues which match the auto-completion query for the
 // user which executes this request. This REST method will check the user's history
 // and the user's browsing context and select this issues, which match the query.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4093
-func (api *API) Picker(params PickerParams) ([]*PickerSection, error) {
+func (api *API) IssuePicker(params IssuePickerParams) ([]*IssuePickerSection, error) {
 	result := &struct {
-		Sections []*PickerSection `json:"sections"`
+		Sections []*IssuePickerSection `json:"sections"`
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/picker",
@@ -1476,6 +1476,40 @@ func (api *API) GetRole(roleID string) (*Role, error) {
 		return result, nil
 	case 401:
 		return nil, ErrNoAuth
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetGroup returns representation for the requested group. Allows to get list of active
+// users belonging to the specified group and its subgroups if "users" expand option is
+// provided. You can page through users list by using indexes in expand param. For example
+// to get users from index 10 to index 15 use "users[10:15]" expand value. This will
+// return 6 users (if there are at least 16 users in this group). Indexes are 0-based
+// and inclusive.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2890
+func (api *API) GetGroup(params GroupParams) (*Group, error) {
+	result := &Group{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/group",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
