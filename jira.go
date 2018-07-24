@@ -535,9 +535,9 @@ func (api *API) GetCreateMeta(params CreateMetaParams) ([]*Project, error) {
 // user which executes this request. This REST method will check the user's history
 // and the user's browsing context and select this issues, which match the query.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4093
-func (api *API) IssuePicker(params IssuePickerParams) ([]*IssuePickerSection, error) {
+func (api *API) IssuePicker(params IssuePickerParams) ([]*IssuePickerResults, error) {
 	result := &struct {
-		Sections []*IssuePickerSection `json:"sections"`
+		Sections []*IssuePickerResults `json:"sections"`
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/picker",
@@ -1510,6 +1510,32 @@ func (api *API) GetGroup(params GroupParams) (*Group, error) {
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GroupPicker returns groups with substrings matching a given query. This is mainly
+// for use with the group picker, so the returned groups contain html to be used as
+// picker suggestions. The groups are also wrapped in a single response object that
+// also contains a header for use in the picker, specifically Showing X of Y matching
+// groups. The number of groups returned is limited by the system property
+// "jira.ajax.autocomplete.limit" The groups will be unique and sorted.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5199
+func (api *API) GroupPicker(params GroupPickerParams) (*GroupPickerResults, error) {
+	result := &GroupPickerResults{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/groups/picker",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
 	default:
 		return nil, makeUnknownError(statusCode)
 	}

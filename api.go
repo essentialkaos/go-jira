@@ -186,15 +186,6 @@ type IssueFields struct {
 	Custom                        map[string]json.RawMessage `json:"-"`
 }
 
-// IssueInfo contains simple info about issue
-type IssueInfo struct {
-	Key         string `json:"key"`
-	KeyHTML     string `json:"keyHtml"`
-	Img         string `json:"img"`
-	Summary     string `json:"summary"`
-	SummaryText string `json:"summaryText"`
-}
-
 // IssueType contains info about issue type
 type IssueType struct {
 	ID          string    `json:"id"`
@@ -687,13 +678,42 @@ type IssuePickerParams struct {
 	ShowSubTaskParent bool   `query:"showSubTaskParent,respect"`
 }
 
-// IssuePickerSection contains picker response data
-type IssuePickerSection struct {
+// IssuePickerResult contains issue picker response data
+type IssuePickerResults struct {
 	Label  string       `json:"label"`
 	Sub    string       `json:"sub"`
 	ID     string       `json:"id"`
 	Msg    string       `json:"msg"`
 	Issues []*IssueInfo `json:"issues"`
+}
+
+// IssueInfo contains simple info about issue
+type IssueInfo struct {
+	Key         string `json:"key"`
+	KeyHTML     string `json:"keyHtml"`
+	Img         string `json:"img"`
+	Summary     string `json:"summary"`
+	SummaryText string `json:"summaryText"`
+}
+
+// IssuePickerParams is params for fetching data from group picker
+type GroupPickerParams struct {
+	Query      string `query:"query"`
+	Exclude    string `query:"exclude"`
+	MaxResults int    `query:"maxResults"`
+}
+
+// GroupPickerResults contains group picker response data
+type GroupPickerResults struct {
+	Header string       `json:"header"`
+	Total  int          `json:"total"`
+	Groups []*GroupInfo `json:"groups"`
+}
+
+// GroupInfo contains simple info about group
+type GroupInfo struct {
+	Name string `json:"name"`
+	HTML string `json:"html"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -795,7 +815,12 @@ func (p PermissionsParams) ToQuery() string {
 }
 
 // ToQuery convert params to URL query
-func (p PickerParams) ToQuery() string {
+func (p IssuePickerParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p GroupPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
