@@ -1159,6 +1159,79 @@ func (api *API) GetProjectRole(projectIDOrKey, roleID string) (*Role, error) {
 	}
 }
 
+// GetProjectCategories returns all project categories
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1411
+func (api *API) GetProjectCategories() ([]*ProjectCategory, error) {
+	result := []*ProjectCategory{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/projectCategory",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 500:
+		return nil, ErrGenReponse
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetProjectCategory returns a representation of a project category
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1459
+func (api *API) GetProjectCategory(categoryID string) (*ProjectCategory, error) {
+	result := &ProjectCategory{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/projectCategory/"+categoryID,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// ValidateProjectKey validates a project key
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4795
+func (api *API) ValidateProjectKey(projectKey string) error {
+	result := &struct {
+		Errors map[string]string `json:"errors"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/projectvalidate/key?key="+projectKey,
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case 200:
+		if len(result.Errors) == 0 {
+			return nil
+		} else {
+			return errors.New(result.Errors["projectKey"])
+		}
+	default:
+		return makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
