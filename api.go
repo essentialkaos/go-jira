@@ -309,7 +309,7 @@ type Filter struct {
 	SearchURL        string                   `json:"searchUrl"`
 	IsFavourite      bool                     `json:"favourite"`
 	Owner            *User                    `json:"owner"`
-	SharedUsers      *FilterShares            `json:"sharedUsers"`
+	SharedUsers      *UserCollection          `json:"sharedUsers"`
 	Subscriptions    *FilterSubscriptions     `json:"subscriptions"`
 	SharePermissions []*FilterSharePermission `json:"sharePermissions"`
 }
@@ -320,15 +320,6 @@ type FilterSharePermission struct {
 	Type    string   `json:"type"`
 	Project *Project `json:"project"`
 	Group   *Group   `json:"group"`
-}
-
-// FilterShares contains info about filter shares
-type FilterShares struct {
-	Size       int     `json:"size"`
-	MaxResults int     `json:"max-results"`
-	StartIndex int     `json:"start-index"`
-	EndIndex   int     `json:"end-index"`
-	Items      []*User `json:"items"`
 }
 
 // FilterSubscriptions contains info about filter subscriptions
@@ -364,7 +355,7 @@ type LinkType struct {
 	Outward string `json:"outward"`
 }
 
-// RemoteLinkParams params for fetching remote link info
+// RemoteLinkParams is params for fetching remote link info
 type RemoteLinkParams struct {
 	GlobalID string `query:"globalId"`
 }
@@ -397,9 +388,16 @@ type RemoteLinkIcon struct {
 
 // GROUPS /////////////////////////////////////////////////////////////////////////// //
 
+// GroupParams is params for fetching groups info
+type GroupParams struct {
+	Name   string   `query:"groupname"`
+	Expand []string `query:"expand"`
+}
+
 // Group contains info about user group
 type Group struct {
-	Name string `json:"name"`
+	Name  string          `json:"name"`
+	Users *UserCollection `json:"users"`
 }
 
 // META ///////////////////////////////////////////////////////////////////////////// //
@@ -578,6 +576,15 @@ type Transition struct {
 }
 
 // USERS //////////////////////////////////////////////////////////////////////////// //
+
+// UserCollection is users collection
+type UserCollection struct {
+	Size       int     `json:"size"`
+	MaxResults int     `json:"max-results"`
+	StartIndex int     `json:"start-index"`
+	EndIndex   int     `json:"end-index"`
+	Items      []*User `json:"items"`
+}
 
 // User contains user info
 type User struct {

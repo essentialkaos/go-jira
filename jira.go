@@ -259,9 +259,9 @@ func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error
 	}
 }
 
-// GetComments returns all comments for an issue
+// GetIssueComments returns all comments for an issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3930
-func (api *API) GetComments(issueIDOrKey string, params ExpandParameters) (*CommentCollection, error) {
+func (api *API) GetIssueComments(issueIDOrKey string, params ExpandParameters) (*CommentCollection, error) {
 	result := &CommentCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/comment",
@@ -282,9 +282,9 @@ func (api *API) GetComments(issueIDOrKey string, params ExpandParameters) (*Comm
 	}
 }
 
-// GetComment returns comment for an issue
+// GetIssueComment returns comment for an issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3987
-func (api *API) GetComment(issueIDOrKey, commentID string, params ExpandParameters) (*Comment, error) {
+func (api *API) GetIssueComment(issueIDOrKey, commentID string, params ExpandParameters) (*Comment, error) {
 	result := &Comment{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/comment/"+commentID,
@@ -328,9 +328,9 @@ func (api *API) GetIssueMeta(issueIDOrKey string) (*IssueMeta, error) {
 	}
 }
 
-// GetRemoteLinks returns sub-resource representing the remote issue links on the issue
+// GetIssueRemoteLinks returns sub-resource representing the remote issue links on the issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4385
-func (api *API) GetRemoteLinks(issueIDOrKey string, params RemoteLinkParams) ([]*RemoteLink, error) {
+func (api *API) GetIssueRemoteLinks(issueIDOrKey string, params RemoteLinkParams) ([]*RemoteLink, error) {
 	result := []*RemoteLink{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/remotelink",
@@ -355,9 +355,9 @@ func (api *API) GetRemoteLinks(issueIDOrKey string, params RemoteLinkParams) ([]
 	}
 }
 
-// GetRemoteLink returns remote issue link with the given id on the issue
+// GetIssueRemoteLink returns remote issue link with the given id on the issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4478
-func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) {
+func (api *API) GetIssueRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) {
 	result := &RemoteLink{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/remotelink/"+linkID,
@@ -384,10 +384,10 @@ func (api *API) GetRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, error) 
 	}
 }
 
-// GetTransitions returns a list of the transitions possible for this issue by the current user,
+// GetIssueTransitions returns a list of the transitions possible for this issue by the current user,
 // along with fields that are required and their types
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4051
-func (api *API) GetTransitions(issueIDOrKey string, params TransitionsParams) ([]*Transition, error) {
+func (api *API) GetIssueTransitions(issueIDOrKey string, params TransitionsParams) ([]*Transition, error) {
 	result := &struct {
 		Transitions []*Transition `json:"transitions"`
 	}{}
@@ -411,9 +411,9 @@ func (api *API) GetTransitions(issueIDOrKey string, params TransitionsParams) ([
 	}
 }
 
-// GetVotes returns sub-resource representing the voters on the issue
+// GetIssueVotes returns sub-resource representing the voters on the issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4143
-func (api *API) GetVotes(issueIDOrKey string) (*VotesInfo, error) {
+func (api *API) GetIssueVotes(issueIDOrKey string) (*VotesInfo, error) {
 	result := &VotesInfo{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/votes",
@@ -434,9 +434,9 @@ func (api *API) GetVotes(issueIDOrKey string) (*VotesInfo, error) {
 	}
 }
 
-// GetWatchers returns the list of watchers for the issue with the given key
+// GetIssueWatchers returns the list of watchers for the issue with the given key
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4232
-func (api *API) GetWatchers(issueIDOrKey string) (*WatchersInfo, error) {
+func (api *API) GetIssueWatchers(issueIDOrKey string) (*WatchersInfo, error) {
 	result := &WatchersInfo{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/watchers",
@@ -457,9 +457,9 @@ func (api *API) GetWatchers(issueIDOrKey string) (*WatchersInfo, error) {
 	}
 }
 
-// GetWorklogs returns all work logs for an issue
+// GetIssueWorklogs returns all work logs for an issue
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4232
-func (api *API) GetWorklogs(issueIDOrKey string) (*WorklogCollection, error) {
+func (api *API) GetIssueWorklogs(issueIDOrKey string) (*WorklogCollection, error) {
 	result := &WorklogCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/worklog",
@@ -480,9 +480,9 @@ func (api *API) GetWorklogs(issueIDOrKey string) (*WorklogCollection, error) {
 	}
 }
 
-// GetWorklog returns a specific worklog
+// GetIssueWorklog returns a specific worklog
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4611
-func (api *API) GetWorklog(issueIDOrKey, worklogID string) (*Worklog, error) {
+func (api *API) GetIssueWorklog(issueIDOrKey, worklogID string) (*Worklog, error) {
 	result := &Worklog{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/worklog/"+worklogID,
