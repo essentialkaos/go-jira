@@ -29,10 +29,18 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 
 	c.Assert(p.ToQuery(), Equals, `expand=test1%2Ctest2`)
 
-	p = PickerParams{
+	p = IssuePickerParams{
 		Query:        "ABCD",
 		ShowSubTasks: true,
 	}
 
 	c.Assert(p.ToQuery(), Equals, `query=ABCD&showSubTasks=true&showSubTaskParent=false`)
+
+	p = GroupUserPickerParams{
+		Query:      "ABCD",
+		ShowAvatar: true,
+		ProjectID:  []string{"1", "2"},
+	}
+
+	c.Assert(p.ToQuery(), Equals, `query=ABCD&showAvatar=true&projectId=1&projectId=2`)
 }
