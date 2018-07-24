@@ -102,6 +102,71 @@ func (api *API) GetConfiguration() (*Configuration, error) {
 	}
 }
 
+// GetDashboards returns a list of all dashboards, optionally filtering them
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1593
+func (api *API) GetDashboards(params DashboardParams) (*DashboardCollection, error) {
+	result := &DashboardCollection{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/dashboard",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetDashboard returns a single dashboard
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1621
+func (api *API) GetDashboard(dashboardID string) (*Dashboard, error) {
+	result := &Dashboard{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/dashboard/"+dashboardID,
+		EmptyParameters{}, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetFields returns a list of all fields, both System and Custom
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5959
+func (api *API) GetFields() ([]*Field, error) {
+	result := []*Field{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/field",
+		EmptyParameters{}, &result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetIssue returns a full representation of the issue for the given issue key
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4164
 func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error) {

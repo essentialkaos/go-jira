@@ -103,6 +103,30 @@ type TimeTrackingConfiguration struct {
 	DefaultUnit        string  `json:"defaultUnit"`
 }
 
+// DASHBOARDS /////////////////////////////////////////////////////////////////////// //
+
+// DashboardParams is params for fetching dashboards
+type DashboardParams struct {
+	Filter     string `query:"filter"`
+	StartAt    int    `query:"startAt"`
+	MaxResults int    `query:"maxResults"`
+}
+
+// DashboardCollection is dashboard collection
+type DashboardCollection struct {
+	StartAt    int          `json:"startAt"`
+	MaxResults int          `json:"maxResults"`
+	Total      int          `json:"total"`
+	Data       []*Dashboard `json:"dashboards"`
+}
+
+// Dashboard contains info about dashboard
+type Dashboard struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	View string `json:"view"`
+}
+
 // ISSUES /////////////////////////////////////////////////////////////////////////// //
 
 // IssueParams is params for fetching issue info
@@ -334,6 +358,18 @@ type Group struct {
 // IssueMeta contains meta data for editing an issue
 type IssueMeta struct {
 	Fields map[string]*FieldMeta `json:"fields"`
+}
+
+// Field contains info about field
+type Field struct {
+	ID           string       `json:"id"`
+	Name         string       `json:"name"`
+	IsCustom     bool         `json:"custom"`
+	IsOrderable  bool         `json:"orderable"`
+	IsNavigable  bool         `json:"navigable"`
+	IsSearchable bool         `json:"searchable"`
+	ClauseNames  []string     `json:"clauseNames"`
+	Schema       *FieldSchema `json:"schema"`
 }
 
 // FieldMeta contains field meta
@@ -669,6 +705,11 @@ func (p EmptyParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p ExpandParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p DashboardParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
