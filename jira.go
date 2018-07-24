@@ -1541,6 +1541,27 @@ func (api *API) GroupPicker(params GroupPickerParams) (*GroupPickerResults, erro
 	}
 }
 
+// GroupUserPicker returns a list of users and groups matching query with highlighting
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1792
+func (api *API) GroupUserPicker(params GroupUserPickerParams) (*GroupUserPickerResults, error) {
+	result := &GroupUserPickerResults{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/groupuserpicker",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]

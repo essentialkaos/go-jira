@@ -716,6 +716,37 @@ type GroupInfo struct {
 	HTML string `json:"html"`
 }
 
+// is params for fetching data from user/group picker
+type GroupUserPickerParams struct {
+	Query       string   `query:"query"`
+	MaxResults  int      `query:"maxResults"`
+	ShowAvatar  bool     `query:"showAvatar"`
+	FieldID     string   `query:"fieldId"`
+	ProjectID   []string `query:"projectId,unwrap"`
+	IssueTypeID []string `query:"issueTypeId,unwrap"`
+}
+
+// GroupUserPickerResults contains user/group picker response data
+type GroupUserPickerResults struct {
+	Users  *UserPickerResults  `json:"users"`
+	Groups *GroupPickerResults `json:"groups"`
+}
+
+// UserPickerResults contains user picker response data
+type UserPickerResults struct {
+	Header string      `json:"header"`
+	Total  int         `json:"total"`
+	Users  []*UserInfo `json:"users"`
+}
+
+// UserInfo contains simple info about user
+type UserInfo struct {
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+	Key         string `json:"key"`
+	HTML        string `json:"html"`
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // UnmarshalJSON is custom Date format unmarshaler
@@ -821,6 +852,11 @@ func (p IssuePickerParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p GroupPickerParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p GroupUserPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
