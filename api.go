@@ -190,6 +190,7 @@ type IssueFields struct {
 	Worklogs                      *WorklogCollection         `json:"worklog"`
 	Votes                         *VotesInfo                 `json:"votes"`
 	Status                        *Status                    `json:"status"`
+	Security                      *SecurityLevel             `json:"security"`
 	Labels                        []string                   `json:"labels"`
 	Components                    []*Component               `json:"components"`
 	Attachments                   []*Attachment              `json:"attachment"`
@@ -222,6 +223,13 @@ type Priority struct {
 
 // Resolution contains resolution info
 type Resolution struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// SecurityLevel contains info about security level
+type SecurityLevel struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`

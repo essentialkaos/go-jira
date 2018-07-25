@@ -1633,6 +1633,30 @@ func (api *API) Search(params SearchParams) (*SearchResults, error) {
 	}
 }
 
+// GetSecurityLevel returns a full representation of the security level that has
+// the given id
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4818
+func (api *API) GetSecurityLevel(levelID string) (*SecurityLevel, error) {
+	result := &SecurityLevel{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/securitylevel/"+levelID,
+		EmptyParameters{}, result, nil, true,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
