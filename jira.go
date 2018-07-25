@@ -102,6 +102,33 @@ func (api *API) GetConfiguration() (*Configuration, error) {
 	}
 }
 
+// GetServerInfo returns general information about the current JIRA server
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4836
+func (api *API) GetServerInfo(DoHealthCheck bool) (*ServerInfo, error) {
+	url := "/rest/api/2/serverInfo"
+
+	if DoHealthCheck {
+		url += "?doHealthCheck=true"
+	}
+
+	result := &ServerInfo{}
+	statusCode, err := api.doRequest(
+		"GET", url,
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetDashboards returns a list of all dashboards, optionally filtering them
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1593
 func (api *API) GetDashboards(params DashboardParams) (*DashboardCollection, error) {

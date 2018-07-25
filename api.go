@@ -775,6 +775,28 @@ type UserInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ServerInfo contains info about JIRA instance
+type ServerInfo struct {
+	BuildDate      *Date          `json:"buildDate"`
+	ServerTime     *Date          `json:"serverTime"`
+	BaseURL        string         `json:"baseUrl"`
+	Version        string         `json:"version"`
+	SCMInfo        string         `json:"scmInfo"`
+	ServerTitle    string         `json:"serverTitle"`
+	VersionNumbers []int          `json:"versionNumbers"`
+	BuildNumber    int            `json:"buildNumber"`
+	HealthChecks   []*HealthCheck `json:"healthChecks"`
+}
+
+// HealthCheck contains info about health check
+type HealthCheck struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsPassed    bool   `json:"passed"`
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // UnmarshalJSON is custom Date format unmarshaler
 func (d *Date) UnmarshalJSON(b []byte) error {
 	var err error
