@@ -129,6 +129,32 @@ func (api *API) GetServerInfo(DoHealthCheck bool) (*ServerInfo, error) {
 	}
 }
 
+// GetColumns returns the default system columns for issue navigator. Admin permission
+// will be required.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3809
+func (api *API) GetColumns() ([]*Column, error) {
+	result := []*Column{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/settings/columns",
+		EmptyParameters{}, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 403:
+		return nil, ErrNoPerms
+	case 500:
+		return nil, ErrGenReponse
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetDashboards returns a list of all dashboards, optionally filtering them
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1593
 func (api *API) GetDashboards(params DashboardParams) (*DashboardCollection, error) {

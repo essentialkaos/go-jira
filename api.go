@@ -88,6 +88,14 @@ type Suggestion struct {
 	DisplayName string `json:"displayName"`
 }
 
+// COLUMNS ////////////////////////////////////////////////////////////////////////// //
+
+// Column contains info about column
+type Column struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+}
+
 // CONFIGURATION //////////////////////////////////////////////////////////////////// //
 
 // Configuration contains info about optional features
