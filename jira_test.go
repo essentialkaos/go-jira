@@ -43,4 +43,13 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 	}
 
 	c.Assert(p.ToQuery(), Equals, `query=ABCD&showAvatar=true&projectId=1&projectId=2`)
+
+	p = SearchParams{
+		JQL:                    "ABCD",
+		StartAt:                1,
+		DisableQueryValidation: true,
+		Expand:                 []string{"test1,test2"},
+	}
+
+	c.Assert(p.ToQuery(), Equals, `jql=ABCD&startAt=1&validateQuery=false&expand=test1%2Ctest2`)
 }

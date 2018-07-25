@@ -85,7 +85,7 @@ func (api *API) GetConfiguration() (*Configuration, error) {
 	result := &Configuration{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/configuration",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -108,7 +108,7 @@ func (api *API) GetDashboards(params DashboardParams) (*DashboardCollection, err
 	result := &DashboardCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/dashboard",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -129,7 +129,7 @@ func (api *API) GetDashboard(dashboardID string) (*Dashboard, error) {
 	result := &Dashboard{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/dashboard/"+dashboardID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -152,7 +152,7 @@ func (api *API) GetFields() ([]*Field, error) {
 	result := []*Field{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/field",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -173,7 +173,7 @@ func (api *API) GetFilter(filterID string, params ExpandParameters) (*Filter, er
 	result := &Filter{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/filter/"+filterID,
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -198,7 +198,7 @@ func (api *API) GetFilterDefaultScope() (string, error) {
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/filter/defaultShareScope",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -221,7 +221,7 @@ func (api *API) GetFilterFavourites(params ExpandParameters) ([]*Filter, error) 
 	result := []*Filter{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/filter/favourite",
-		params, &result, nil,
+		params, &result, nil, false,
 	)
 
 	if err != nil {
@@ -242,7 +242,7 @@ func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error
 	result := &Issue{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey,
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -265,7 +265,7 @@ func (api *API) GetIssueComments(issueIDOrKey string, params ExpandParameters) (
 	result := &CommentCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/comment",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -288,7 +288,7 @@ func (api *API) GetIssueComment(issueIDOrKey, commentID string, params ExpandPar
 	result := &Comment{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/comment/"+commentID,
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -311,7 +311,7 @@ func (api *API) GetIssueMeta(issueIDOrKey string) (*IssueMeta, error) {
 	result := &IssueMeta{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/editmeta",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -334,7 +334,7 @@ func (api *API) GetIssueRemoteLinks(issueIDOrKey string, params RemoteLinkParams
 	result := []*RemoteLink{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/remotelink",
-		params, &result, nil,
+		params, &result, nil, false,
 	)
 
 	if err != nil {
@@ -361,7 +361,7 @@ func (api *API) GetIssueRemoteLink(issueIDOrKey, linkID string) (*RemoteLink, er
 	result := &RemoteLink{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/remotelink/"+linkID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -394,7 +394,7 @@ func (api *API) GetIssueTransitions(issueIDOrKey string, params TransitionsParam
 
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/transitions",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -417,7 +417,7 @@ func (api *API) GetIssueVotes(issueIDOrKey string) (*VotesInfo, error) {
 	result := &VotesInfo{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/votes",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -440,7 +440,7 @@ func (api *API) GetIssueWatchers(issueIDOrKey string) (*WatchersInfo, error) {
 	result := &WatchersInfo{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/watchers",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -463,7 +463,7 @@ func (api *API) GetIssueWorklogs(issueIDOrKey string) (*WorklogCollection, error
 	result := &WorklogCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/worklog",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -486,7 +486,7 @@ func (api *API) GetIssueWorklog(issueIDOrKey, worklogID string) (*Worklog, error
 	result := &Worklog{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/worklog/"+worklogID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -514,7 +514,7 @@ func (api *API) GetCreateMeta(params CreateMetaParams) ([]*Project, error) {
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/createmeta",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -541,7 +541,7 @@ func (api *API) IssuePicker(params IssuePickerParams) ([]*IssuePickerResults, er
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/picker",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -567,7 +567,7 @@ func (api *API) GetIssueProperties(issueIDOrKey string) ([]*Property, error) {
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/properties",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -595,7 +595,7 @@ func (api *API) GetIssueProperties(issueIDOrKey string) ([]*Property, error) {
 func (api *API) SetIssueProperty(issueIDOrKey string, prop *Property) error {
 	statusCode, err := api.doRequest(
 		"PUT", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+prop.Key,
-		EmptyParameters{}, nil, prop,
+		EmptyParameters{}, nil, prop, false,
 	)
 
 	if err != nil {
@@ -628,7 +628,7 @@ func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -658,7 +658,7 @@ func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error
 func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
 	statusCode, err := api.doRequest(
 		"DELETE", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, nil, nil,
+		EmptyParameters{}, nil, nil, false,
 	)
 
 	if err != nil {
@@ -687,7 +687,7 @@ func (api *API) GetIssueLink(linkID string) (*Link, error) {
 	result := &Link{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issueLink/"+linkID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -722,7 +722,7 @@ func (api *API) GetIssueLinkTypes() ([]*LinkType, error) {
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issueLinkType",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -746,7 +746,7 @@ func (api *API) GetIssueLinkType(linkTypeID string) (*LinkType, error) {
 	result := &LinkType{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issueLinkType/"+linkTypeID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -769,7 +769,7 @@ func (api *API) GetIssueTypes() ([]*IssueType, error) {
 	result := []*IssueType{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issuetype",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -790,7 +790,7 @@ func (api *API) GetIssueType(issueTypeID string) (*IssueType, error) {
 	result := &IssueType{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issuetype/"+issueTypeID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -817,7 +817,7 @@ func (api *API) GetIssueTypeAlternatives(issueTypeID string) ([]*IssueType, erro
 	result := []*IssueType{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/issuetype/"+issueTypeID+"/alternatives",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -840,7 +840,7 @@ func (api *API) GetAutocompleteData() (*AutocompleteData, error) {
 	result := &AutocompleteData{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/jql/autocompletedata",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -869,7 +869,7 @@ func (api *API) GetAutocompleteSuggestions(params SuggestionParams) ([]Suggestio
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/jql/autocompletedata/suggestions",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -894,7 +894,7 @@ func (api *API) GetMyPermissions(params PermissionsParams) (map[string]*Permissi
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/mypermissions",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -919,7 +919,7 @@ func (api *API) GetMyself() (*User, error) {
 	result := &User{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/myself",
-		ExpandParameters{[]string{"groups"}}, result, nil,
+		ExpandParameters{[]string{"groups"}}, result, nil, false,
 	)
 
 	if err != nil {
@@ -944,7 +944,7 @@ func (api *API) GetPriorities() ([]*Priority, error) {
 	result := []*Priority{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/priority",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -965,7 +965,7 @@ func (api *API) GetPriority(priorityID string) (*Priority, error) {
 	result := &Priority{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/priority/"+priorityID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -990,7 +990,7 @@ func (api *API) GetProjects(params ExpandParameters) ([]*Project, error) {
 	result := []*Project{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project",
-		params, &result, nil,
+		params, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1013,7 +1013,7 @@ func (api *API) GetProject(projectIDOrKey string, params ExpandParameters) (*Pro
 	result := &Project{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey,
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -1037,7 +1037,7 @@ func (api *API) GetProjectAvatars(projectIDOrKey string) (*ProjectAvatars, error
 	result := &ProjectAvatars{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/avatars",
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1063,7 +1063,7 @@ func (api *API) GetProjectComponents(projectIDOrKey string) ([]*Component, error
 	result := []*Component{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/components",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1086,7 +1086,7 @@ func (api *API) GetProjectStatuses(projectIDOrKey string) ([]*IssueType, error) 
 	result := []*IssueType{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/statuses",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1109,7 +1109,7 @@ func (api *API) GetProjectVersions(projectIDOrKey string, params ExpandParameter
 	result := []*Version{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/versions",
-		params, &result, nil,
+		params, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1132,7 +1132,7 @@ func (api *API) GetProjectVersion(projectIDOrKey string, params VersionParams) (
 	result := &VersionCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/version",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -1158,7 +1158,7 @@ func (api *API) GetProjectProperties(projectIDOrKey string) ([]*Property, error)
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/properties",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1186,7 +1186,7 @@ func (api *API) GetProjectProperties(projectIDOrKey string) ([]*Property, error)
 func (api *API) SetProjectProperty(projectIDOrKey string, prop *Property) error {
 	statusCode, err := api.doRequest(
 		"PUT", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+prop.Key,
-		EmptyParameters{}, nil, prop,
+		EmptyParameters{}, nil, prop, false,
 	)
 
 	if err != nil {
@@ -1219,7 +1219,7 @@ func (api *API) GetProjectProperty(projectIDOrKey, propKey string) (*Property, e
 	}{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1249,7 +1249,7 @@ func (api *API) GetProjectProperty(projectIDOrKey, propKey string) (*Property, e
 func (api *API) DeleteProjectProperty(projectIDOrKey, propKey string) error {
 	statusCode, err := api.doRequest(
 		"DELETE", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, nil, nil,
+		EmptyParameters{}, nil, nil, false,
 	)
 
 	if err != nil {
@@ -1278,7 +1278,7 @@ func (api *API) GetProjectRoles(projectIDOrKey string) (map[string]string, error
 	result := make(map[string]string)
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/role",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1301,7 +1301,7 @@ func (api *API) GetProjectRole(projectIDOrKey, roleID string) (*Role, error) {
 	result := &Role{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/role/"+roleID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1324,7 +1324,7 @@ func (api *API) GetProjectCategories() ([]*ProjectCategory, error) {
 	result := []*ProjectCategory{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/projectCategory",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1347,7 +1347,7 @@ func (api *API) GetProjectCategory(categoryID string) (*ProjectCategory, error) 
 	result := &ProjectCategory{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/projectCategory/"+categoryID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1367,12 +1367,10 @@ func (api *API) GetProjectCategory(categoryID string) (*ProjectCategory, error) 
 // ValidateProjectKey validates a project key
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4795
 func (api *API) ValidateProjectKey(projectKey string) error {
-	result := &struct {
-		Errors map[string]string `json:"errors"`
-	}{}
+	result := &ErrorCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/projectvalidate/key?key="+projectKey,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, true,
 	)
 
 	if err != nil {
@@ -1381,10 +1379,7 @@ func (api *API) ValidateProjectKey(projectKey string) error {
 
 	switch statusCode {
 	case 200:
-		if len(result.Errors) != 0 {
-			return errors.New(result.Errors["projectKey"])
-		}
-		return nil
+		return result.Error()
 	default:
 		return makeUnknownError(statusCode)
 	}
@@ -1396,7 +1391,7 @@ func (api *API) GetResolutions() ([]*Resolution, error) {
 	result := []*Resolution{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/resolution",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1417,7 +1412,7 @@ func (api *API) GetResolution(resolutionID string) (*Resolution, error) {
 	result := &Resolution{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/resolution/"+resolutionID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1441,7 +1436,7 @@ func (api *API) GetRoles() ([]*Role, error) {
 	result := []*Role{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/role",
-		EmptyParameters{}, &result, nil,
+		EmptyParameters{}, &result, nil, false,
 	)
 
 	if err != nil {
@@ -1464,7 +1459,7 @@ func (api *API) GetRole(roleID string) (*Role, error) {
 	result := &Role{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/role/"+roleID,
-		EmptyParameters{}, result, nil,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1492,7 +1487,7 @@ func (api *API) GetGroup(params GroupParams) (*Group, error) {
 	result := &Group{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/group",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -1526,7 +1521,7 @@ func (api *API) GroupPicker(params GroupPickerParams) (*GroupPickerResults, erro
 	result := &GroupPickerResults{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/groups/picker",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -1547,7 +1542,7 @@ func (api *API) GroupUserPicker(params GroupUserPickerParams) (*GroupUserPickerR
 	result := &GroupUserPickerResults{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/groupuserpicker",
-		params, result, nil,
+		params, result, nil, false,
 	)
 
 	if err != nil {
@@ -1562,12 +1557,35 @@ func (api *API) GroupUserPicker(params GroupUserPickerParams) (*GroupUserPickerR
 	}
 }
 
+// Search searches for issues using JQL
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1528
+func (api *API) Search(params SearchParams) (*SearchResults, error) {
+	result := &SearchResults{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/search",
+		params, result, nil, true,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return result, ErrInvalidInput
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]
 
 // doRequest create and execute request
-func (api *API) doRequest(method, uri string, params Parameters, result, body interface{}) (int, error) {
+func (api *API) doRequest(method, uri string, params Parameters, result, body interface{}, decodeError bool) (int, error) {
 	req := api.acquireRequest(method, uri, params)
 	resp := fasthttp.AcquireResponse()
 
@@ -1592,7 +1610,18 @@ func (api *API) doRequest(method, uri string, params Parameters, result, body in
 
 	statusCode := resp.StatusCode()
 
-	if statusCode != 200 || result == nil {
+	if statusCode != 200 && decodeError {
+		errCollection := &ErrorCollection{}
+		err = json.Unmarshal(resp.Body(), errCollection)
+
+		if err != nil {
+			return statusCode, err
+		}
+
+		return statusCode, errCollection.Error()
+	}
+
+	if result == nil {
 		return statusCode, nil
 	}
 

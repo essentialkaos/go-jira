@@ -21,6 +21,7 @@ import (
 const (
 	_OPTION_UNWRAP  = "unwrap"
 	_OPTION_RESPECT = "respect"
+	_OPTION_REVERSE = "reverse"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,11 +58,16 @@ func paramsToQuery(params interface{}) string {
 			}
 
 		case "bool":
-			if value.Bool() {
-				result += getTagName(tag) + "=true&"
+			b := value.Bool()
+			if hasTagOption(tag, _OPTION_REVERSE) && b {
+				result += getTagName(tag) + "=false&"
 			} else {
-				if hasTagOption(tag, _OPTION_RESPECT) {
-					result += getTagName(tag) + "=false&"
+				if b {
+					result += getTagName(tag) + "=true&"
+				} else {
+					if hasTagOption(tag, _OPTION_RESPECT) {
+						result += getTagName(tag) + "=false&"
+					}
 				}
 			}
 

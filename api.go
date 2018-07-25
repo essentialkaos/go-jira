@@ -10,6 +10,7 @@ package jira
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -36,6 +37,12 @@ type EmptyParameters struct {
 // Date is RFC3339 encoded date
 type Date struct {
 	time.Time
+}
+
+// Error is JIRA error struct
+type ErrorCollection struct {
+	ErrorMessages []string          `json:"errorMessages"`
+	Errors        map[string]string `json:"errors"`
 }
 
 // AUTOCOMPLETE ///////////////////////////////////////////////////////////////////// //
@@ -139,7 +146,6 @@ type IssueParams struct {
 type Issue struct {
 	ID     string       `json:"id"`
 	Key    string       `json:"key"`
-	Expand string       `json:"expand"`
 	Fields *IssueFields `json:"fields"`
 }
 
@@ -504,6 +510,26 @@ type ProjectAvatar struct {
 	Avatars        *Avatars `json:"urls"`
 }
 
+// SEARCH /////////////////////////////////////////////////////////////////////////// //
+
+// SearchParams is params for fetching search results
+type SearchParams struct {
+	JQL                    string   `query:"jql"`
+	StartAt                int      `query:"startAt"`
+	MaxResults             int      `query:"maxResults"`
+	DisableQueryValidation bool     `query:"validateQuery,reverse"`
+	Fields                 []string `query:"fields"`
+	Expand                 []string `query:"expand"`
+}
+
+// SearchResults contains search result
+type SearchResults struct {
+	StartAt    int      `json:"startAt"`
+	MaxResults int      `json:"maxResults"`
+	Total      int      `json:"total"`
+	Issues     []*Issue `json:"issues"`
+}
+
 // PROPERTY ///////////////////////////////////////////////////////////////////////// //
 
 // Property contains info about property
@@ -805,6 +831,21 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Error return first error extracted from error collection
+func (e *ErrorCollection) Error() error {
+	if len(e.ErrorMessages) > 0 {
+		return errors.New(e.ErrorMessages[0])
+	}
+
+	if len(e.Errors) > 0 {
+		for _, v := range e.Errors {
+			return errors.New(v)
+		}
+	}
+
+	return nil
+}
+
 // ToQuery convert params to URL query
 func (p EmptyParameters) ToQuery() string {
 	return ""
@@ -857,6 +898,11 @@ func (p GroupPickerParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p GroupUserPickerParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p SearchParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
