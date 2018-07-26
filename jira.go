@@ -1529,6 +1529,99 @@ func (api *API) GetRole(roleID string) (*Role, error) {
 	}
 }
 
+// GetStatuses returns a list of all statuses
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e53
+func (api *API) GetStatuses() ([]*Status, error) {
+	result := []*Status{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/status",
+		EmptyParameters{}, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetStatus returns a full representation of the Status having the given id or name
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e74
+func (api *API) GetStatus(statusIDOrName string) (*Status, error) {
+	result := &Status{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/status/"+statusIDOrName,
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetStatusCategories returns a list of all status categories
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5772
+func (api *API) GetStatusCategories() ([]*StatusCategory, error) {
+	result := []*StatusCategory{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/statuscategory",
+		EmptyParameters{}, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetStatusCategory returns a full representation of the StatusCategory having
+// the given id or key
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5793
+func (api *API) GetStatusCategory(caregoryIDOrName string) (*StatusCategory, error) {
+	result := &StatusCategory{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/statuscategory/"+caregoryIDOrName,
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetGroup returns representation for the requested group. Allows to get list of active
 // users belonging to the specified group and its subgroups if "users" expand option is
 // provided. You can page through users list by using indexes in expand param. For example
