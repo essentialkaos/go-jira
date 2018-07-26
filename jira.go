@@ -1640,7 +1640,7 @@ func (api *API) GetSecurityLevel(levelID string) (*SecurityLevel, error) {
 	result := &SecurityLevel{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/securitylevel/"+levelID,
-		EmptyParameters{}, result, nil, true,
+		EmptyParameters{}, result, nil, false,
 	)
 
 	if err != nil {
@@ -1652,6 +1652,82 @@ func (api *API) GetSecurityLevel(levelID string) (*SecurityLevel, error) {
 		return result, nil
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetScreenFields returns available fields for screen. i.e ones that haven't
+// already been added
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3189
+func (api *API) GetScreenFields(screenID string) ([]*ScreenField, error) {
+	result := []*ScreenField{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2//screens/"+screenID+"/availableFields",
+		EmptyParameters{}, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetScreenTabs returns a list of all tabs for the given screen
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3036
+func (api *API) GetScreenTabs(screenID string, params ScreenParams) ([]*ScreenTab, error) {
+	result := []*ScreenTab{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2//screens/"+screenID+"/tabs",
+		params, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetScreenTabFields returns all fields for a given tab
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3103
+func (api *API) GetScreenTabFields(screenID, tabID string, params ScreenParams) ([]*ScreenField, error) {
+	result := []*ScreenField{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2//screens/"+screenID+"/tabs/"+tabID+"/fields",
+		params, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}

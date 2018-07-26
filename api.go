@@ -399,6 +399,25 @@ type RemoteLinkIcon struct {
 	URL string `json:"url16x16"`
 }
 
+// SCREENS ////////////////////////////////////////////////////////////////////////// //
+
+// ScreenItem contains info about screen field
+type ScreenField struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// ScreenItem contains info about screen tab
+type ScreenTab struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+// ScreenParams is params for fetching info about screen
+type ScreenParams struct {
+	ProjectKey string `query:"projectKey"`
+}
+
 // GROUPS /////////////////////////////////////////////////////////////////////////// //
 
 // GroupParams is params for fetching groups info
@@ -936,6 +955,11 @@ func (p GroupPickerParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p GroupUserPickerParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p ScreenParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
