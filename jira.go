@@ -1736,6 +1736,61 @@ func (api *API) GetUserColumns(username string) ([]*Column, error) {
 	}
 }
 
+// GetUsersByPermissions eturns a list of active users that match the search string and
+// have all specified permissions for the project or issue. This resource can be
+// accessed by users with ADMINISTER_PROJECT permission for the project or global
+// ADMIN or SYSADMIN rights.
+//
+func (api *API) GetUsersByPermissions(params UserPermissionParams) ([]*User, error) {
+	result := []*User{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/user/permission/search",
+		params, &result, nil, true,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// UserPicker returns a list of users matching query with highlighting
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2027
+func (api *API) UserPicker(params UserPickerParams) (*UserPickerResults, error) {
+	result := &UserPickerResults{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/user/picker",
+		params, result, nil, true,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GroupPicker returns groups with substrings matching a given query. This is mainly
 // for use with the group picker, so the returned groups contain html to be used as
 // picker suggestions. The groups are also wrapped in a single response object that
@@ -1747,7 +1802,7 @@ func (api *API) GroupPicker(params GroupPickerParams) (*GroupPickerResults, erro
 	result := &GroupPickerResults{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/groups/picker",
-		params, result, nil, false,
+		params, result, nil, true,
 	)
 
 	if err != nil {
@@ -1768,7 +1823,7 @@ func (api *API) GroupUserPicker(params GroupUserPickerParams) (*GroupUserPickerR
 	result := &GroupUserPickerResults{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/groupuserpicker",
-		params, result, nil, false,
+		params, result, nil, true,
 	)
 
 	if err != nil {
@@ -1801,6 +1856,31 @@ func (api *API) Search(params SearchParams) (*SearchResults, error) {
 		return result, nil
 	case 400:
 		return result, ErrInvalidInput
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// SearchUsers returns a list of users that match the search string
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1990
+func (api *API) SearchUsers(params UserSearchParams) ([]*User, error) {
+	result := []*User{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/user/search",
+		params, &result, nil, true,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
 	default:
 		return nil, makeUnknownError(statusCode)
 	}

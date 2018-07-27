@@ -19,6 +19,50 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// User permissions
+const (
+	PERMISSION_ADMINISTER                        = "ADMINISTER"
+	PERMISSION_ASSIGN_ISSUE                      = "ASSIGN_ISSUE"
+	PERMISSION_ASSIGNABLE_USER                   = "ASSIGNABLE_USER"
+	PERMISSION_ATTACHMENT_DELETE_ALL             = "ATTACHMENT_DELETE_ALL"
+	PERMISSION_ATTACHMENT_DELETE_OWN             = "ATTACHMENT_DELETE_OWN"
+	PERMISSION_BROWSE                            = "BROWSE"
+	PERMISSION_BULK_CHANGE                       = "BULK_CHANGE"
+	PERMISSION_CLOSE_ISSUE                       = "CLOSE_ISSUE"
+	PERMISSION_COMMENT_DELETE_ALL                = "COMMENT_DELETE_ALL"
+	PERMISSION_COMMENT_DELETE_OWN                = "COMMENT_DELETE_OWN"
+	PERMISSION_COMMENT_EDIT_ALL                  = "COMMENT_EDIT_ALL"
+	PERMISSION_COMMENT_EDIT_OWN                  = "COMMENT_EDIT_OWN"
+	PERMISSION_COMMENT_ISSUE                     = "COMMENT_ISSUE"
+	PERMISSION_CREATE_ATTACHMENT                 = "CREATE_ATTACHMENT"
+	PERMISSION_CREATE_ISSUE                      = "CREATE_ISSUE"
+	PERMISSION_CREATE_SHARED_OBJECTS             = "CREATE_SHARED_OBJECTS"
+	PERMISSION_DELETE_ISSUE                      = "DELETE_ISSUE"
+	PERMISSION_EDIT_ISSUE                        = "EDIT_ISSUE"
+	PERMISSION_LINK_ISSUE                        = "LINK_ISSUE"
+	PERMISSION_MANAGE_GROUP_FILTER_SUBSCRIPTIONS = "MANAGE_GROUP_FILTER_SUBSCRIPTIONS"
+	PERMISSION_MANAGE_WATCHER_LIST               = "MANAGE_WATCHER_LIST"
+	PERMISSION_MODIFY_REPORTER                   = "MODIFY_REPORTER"
+	PERMISSION_MOVE_ISSUE                        = "MOVE_ISSUE"
+	PERMISSION_PROJECT_ADMIN                     = "PROJECT_ADMIN"
+	PERMISSION_RESOLVE_ISSUE                     = "RESOLVE_ISSUE"
+	PERMISSION_SCHEDULE_ISSUE                    = "SCHEDULE_ISSUE"
+	PERMISSION_SET_ISSUE_SECURITY                = "SET_ISSUE_SECURITY"
+	PERMISSION_SYSTEM_ADMIN                      = "SYSTEM_ADMIN"
+	PERMISSION_USE                               = "USE"
+	PERMISSION_USER_PICKER                       = "USER_PICKER"
+	PERMISSION_VIEW_VERSION_CONTROL              = "VIEW_VERSION_CONTROL"
+	PERMISSION_VIEW_VOTERS_AND_WATCHERS          = "VIEW_VOTERS_AND_WATCHERS"
+	PERMISSION_VIEW_WORKFLOW_READONLY            = "VIEW_WORKFLOW_READONLY"
+	PERMISSION_WORK_ISSUE                        = "WORK_ISSUE"
+	PERMISSION_WORKLOG_DELETE_ALL                = "WORKLOG_DELETE_ALL"
+	PERMISSION_WORKLOG_DELETE_OWN                = "WORKLOG_DELETE_OWN"
+	PERMISSION_WORKLOG_EDIT_ALL                  = "WORKLOG_EDIT_ALL"
+	PERMISSION_WORKLOG_EDIT_OWN                  = "WORKLOG_EDIT_OWN"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Parameters is interface for params structs
 type Parameters interface {
 	ToQuery() string
@@ -638,6 +682,25 @@ type UserParams struct {
 	Expand   []string `query:"expand"`
 }
 
+// UserPermissionParams is permissions for fetching users by permissions
+type UserPermissionParams struct {
+	Username    string   `query:"username"`
+	Permissions []string `query:"permissions"`
+	IssueKey    string   `query:"issueKey"`
+	ProjectKey  string   `query:"projectKey"`
+	StartAt     int      `query:"startAt"`
+	MaxResults  int      `query:"maxResults"`
+}
+
+// UserSearchParams is permissions for searching users
+type UserSearchParams struct {
+	Username        string `query:"username"`
+	StartAt         int    `query:"startAt"`
+	MaxResults      int    `query:"maxResults"`
+	IncludeInactive bool   `query:"includeInactive"`
+	ExcludeActive   bool   `query:"includeActive,reverse"`
+}
+
 // UserCollection is users collection
 type UserCollection struct {
 	Size       int     `json:"size"`
@@ -766,7 +829,7 @@ type IssueInfo struct {
 	SummaryText string `json:"summaryText"`
 }
 
-// IssuePickerParams is params for fetching data from group picker
+// GroupPickerParams is params for fetching data from group picker
 type GroupPickerParams struct {
 	Query      string `query:"query"`
 	Exclude    string `query:"exclude"`
@@ -800,6 +863,14 @@ type GroupUserPickerParams struct {
 type GroupUserPickerResults struct {
 	Users  *UserPickerResults  `json:"users"`
 	Groups *GroupPickerResults `json:"groups"`
+}
+
+// UserPickerParams is params for fetching data from user picker
+type UserPickerParams struct {
+	Query      string `query:"query"`
+	Exclude    string `query:"exclude"`
+	MaxResults int    `query:"maxResults"`
+	ShowAvatar bool   `query:"showAvatar"`
 }
 
 // UserPickerResults contains user picker response data
@@ -994,5 +1065,20 @@ func (p VersionParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p UserParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p UserPickerParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p UserPermissionParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p UserSearchParams) ToQuery() string {
 	return paramsToQuery(p)
 }
