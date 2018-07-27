@@ -1086,8 +1086,8 @@ func (api *API) GetProject(projectIDOrKey string, params ExpandParameters) (*Pro
 // GetProjectAvatars returns all avatars which are visible for the currently logged
 // in user. The avatars are grouped into system and custom.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e3555
-func (api *API) GetProjectAvatars(projectIDOrKey string) (*ProjectAvatars, error) {
-	result := &ProjectAvatars{}
+func (api *API) GetProjectAvatars(projectIDOrKey string) (*Avatars, error) {
+	result := &Avatars{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/2/project/"+projectIDOrKey+"/avatars",
 		EmptyParameters{}, result, nil, false,
@@ -1651,6 +1651,86 @@ func (api *API) GetGroup(params GroupParams) (*Group, error) {
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetUser returns a user
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1869
+func (api *API) GetUser(params UserParams) (*User, error) {
+	result := &User{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/user",
+		params, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetUserAvatars returns all avatars which are visible for the currently logged in user
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2248
+func (api *API) GetUserAvatars(username string) (*Avatars, error) {
+	result := &Avatars{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/user/avatars?username="+username,
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
+	case 500:
+		return nil, ErrGenReponse
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetUserColumns returns the default columns for the given user. Admin permission
+// will be required to get columns for a user other than the currently logged in user.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e2400
+func (api *API) GetUserColumns(username string) ([]*Column, error) {
+	result := []*Column{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/user/columns?username="+username,
+		EmptyParameters{}, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
+	case 500:
+		return nil, ErrGenReponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}

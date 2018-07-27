@@ -45,6 +45,22 @@ type ErrorCollection struct {
 	Errors        map[string]string `json:"errors"`
 }
 
+// AVATARS ////////////////////////////////////////////////////////////////////////// //
+
+// Avatars contains info about project/user avatars
+type Avatars struct {
+	System []*Avatar `json:"system"`
+	Custom []*Avatar `json:"custom"`
+}
+
+// ProjectAvatar contains info about project/user avatar
+type Avatar struct {
+	ID             string     `json:"id"`
+	IsSystemAvatar bool       `json:"isSystemAvatar"`
+	IsSelected     bool       `json:"isSelected"`
+	AvatarURL      *AvatarURL `json:"urls"`
+}
+
 // AUTOCOMPLETE ///////////////////////////////////////////////////////////////////// //
 
 // AutocompleteData contains autocomplete data
@@ -264,8 +280,8 @@ type Progress struct {
 	Total    int     `json:"total"`
 }
 
-// Avatars contains avatars urls
-type Avatars struct {
+// AvatarURL contains avatars urls
+type AvatarURL struct {
 	Size16 string `json:"16x16"`
 	Size24 string `json:"24x24"`
 	Size32 string `json:"32x32"`
@@ -516,7 +532,7 @@ type Project struct {
 	AssigneeType string            `json:"assigneeType"`
 	Lead         *User             `json:"lead"`
 	Category     *ProjectCategory  `json:"projectCategory"`
-	Avatars      *Avatars          `json:"avatarUrls"`
+	AvatarURL    *AvatarURL        `json:"avatarUrls"`
 	ProjectKeys  []string          `json:"projectKeys"`
 	IssueTypes   []*IssueType      `json:"issueTypes"`
 	Versions     []*Version        `json:"versions"`
@@ -529,20 +545,6 @@ type ProjectCategory struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-}
-
-// ProjectAvatars contains info about project avatars
-type ProjectAvatars struct {
-	System []*ProjectAvatar `json:"system"`
-	Custom []*ProjectAvatar `json:"custom"`
-}
-
-// ProjectAvatar contains info about project avatar
-type ProjectAvatar struct {
-	ID             string   `json:"id"`
-	IsSystemAvatar bool     `json:"isSystemAvatar"`
-	IsSelected     bool     `json:"isSelected"`
-	Avatars        *Avatars `json:"urls"`
 }
 
 // SEARCH /////////////////////////////////////////////////////////////////////////// //
@@ -629,6 +631,13 @@ type Transition struct {
 
 // USERS //////////////////////////////////////////////////////////////////////////// //
 
+// UserParams is params for fetching user info
+type UserParams struct {
+	Username string   `query:"username"`
+	Key      string   `query:"key"`
+	Expand   []string `query:"expand"`
+}
+
 // UserCollection is users collection
 type UserCollection struct {
 	Size       int     `json:"size"`
@@ -640,7 +649,7 @@ type UserCollection struct {
 
 // User contains user info
 type User struct {
-	Avatars     *Avatars    `json:"avatarUrls"`
+	AvatarURL   *AvatarURL  `json:"avatarUrls"`
 	Name        string      `json:"name"`
 	Key         string      `json:"key"`
 	Email       string      `json:"emailAddress"`
@@ -980,5 +989,10 @@ func (p TransitionsParams) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p VersionParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p UserParams) ToQuery() string {
 	return paramsToQuery(p)
 }
