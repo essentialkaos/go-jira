@@ -83,7 +83,7 @@ type Date struct {
 	time.Time
 }
 
-// Error is JIRA error struct
+// ErrorCollection is JIRA error struct
 type ErrorCollection struct {
 	ErrorMessages []string          `json:"errorMessages"`
 	Errors        map[string]string `json:"errors"`
@@ -97,7 +97,7 @@ type Avatars struct {
 	Custom []*Avatar `json:"custom"`
 }
 
-// ProjectAvatar contains info about project/user avatar
+// Avatar contains info about project/user avatar
 type Avatar struct {
 	ID             string     `json:"id"`
 	IsSystemAvatar bool       `json:"isSystemAvatar"`
@@ -461,13 +461,13 @@ type RemoteLinkIcon struct {
 
 // SCREENS ////////////////////////////////////////////////////////////////////////// //
 
-// ScreenItem contains info about screen field
+// ScreenField contains info about screen field
 type ScreenField struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
-// ScreenItem contains info about screen tab
+// ScreenTab contains info about screen tab
 type ScreenTab struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -811,7 +811,7 @@ type IssuePickerParams struct {
 	ShowSubTaskParent bool   `query:"showSubTaskParent,respect"`
 }
 
-// IssuePickerResult contains issue picker response data
+// IssuePickerResults contains issue picker response data
 type IssuePickerResults struct {
 	Label  string       `json:"label"`
 	Sub    string       `json:"sub"`
@@ -849,7 +849,7 @@ type GroupInfo struct {
 	HTML string `json:"html"`
 }
 
-// is params for fetching data from user/group picker
+// GroupUserPickerParams is params for fetching data from user/group picker
 type GroupUserPickerParams struct {
 	Query       string   `query:"query"`
 	MaxResults  int      `query:"maxResults"`
