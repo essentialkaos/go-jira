@@ -1916,7 +1916,7 @@ func (api *API) GetSecurityLevel(levelID string) (*SecurityLevel, error) {
 func (api *API) GetScreenFields(screenID string) ([]*ScreenField, error) {
 	result := []*ScreenField{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2//screens/"+screenID+"/availableFields",
+		"GET", "/rest/api/2/screens/"+screenID+"/availableFields",
 		EmptyParameters{}, &result, nil, false,
 	)
 
@@ -1941,7 +1941,7 @@ func (api *API) GetScreenFields(screenID string) ([]*ScreenField, error) {
 func (api *API) GetScreenTabs(screenID string, params ScreenParams) ([]*ScreenTab, error) {
 	result := []*ScreenTab{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2//screens/"+screenID+"/tabs",
+		"GET", "/rest/api/2/screens/"+screenID+"/tabs",
 		params, &result, nil, false,
 	)
 
@@ -1966,7 +1966,7 @@ func (api *API) GetScreenTabs(screenID string, params ScreenParams) ([]*ScreenTa
 func (api *API) GetScreenTabFields(screenID, tabID string, params ScreenParams) ([]*ScreenField, error) {
 	result := []*ScreenField{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2//screens/"+screenID+"/tabs/"+tabID+"/fields",
+		"GET", "/rest/api/2/screens/"+screenID+"/tabs/"+tabID+"/fields",
 		params, &result, nil, false,
 	)
 
@@ -1979,6 +1979,127 @@ func (api *API) GetScreenTabFields(screenID, tabID string, params ScreenParams) 
 		return result, nil
 	case 400:
 		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetVersion returns a project version
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5271
+func (api *API) GetVersion(versionID string, params ExpandParameters) (*Version, error) {
+	result := &Version{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/version/"+versionID,
+		params, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetVersionRelatedCounts returns a bean containing the number of fixed in and affected
+// issues for the given version
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5316
+func (api *API) GetVersionRelatedCounts(versionID string) (int, int, error) {
+	result := &struct {
+		IssuesFixed    int `json:"issuesFixedCount"`
+		IssuesAffected int `json:"issuesAffectedCount"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/version/"+versionID+"/relatedIssueCounts",
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.IssuesFixed, result.IssuesAffected, nil
+	case 404:
+		return 0, 0, ErrNoContent
+	default:
+		return 0, 0, makeUnknownError(statusCode)
+	}
+}
+
+// GetVersionUnresolvedCount eturns the number of unresolved issues for the given version
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e5337
+func (api *API) GetVersionUnresolvedCount(versionID string) (int, error) {
+	result := &struct {
+		IssuesUnresolvedCount int `json:"issuesUnresolvedCount"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/version/"+versionID+"/unresolvedIssueCount",
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return 0, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.IssuesUnresolvedCount, nil
+	case 404:
+		return 0, ErrNoContent
+	default:
+		return 0, makeUnknownError(statusCode)
+	}
+}
+
+// GetWorkflows returns all workflows
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1208
+func (api *API) GetWorkflows() ([]*Workflow, error) {
+	result := []*Workflow{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/workflow",
+		EmptyParameters{}, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetWorkflow return workflow
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1208
+func (api *API) GetWorkflow(workflowName string) (*Workflow, error) {
+	result := &Workflow{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/2/workflow?workflowName="+esc(workflowName),
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
 	case 401:
 		return nil, ErrNoAuth
 	default:

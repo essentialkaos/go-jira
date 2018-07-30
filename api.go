@@ -758,6 +758,12 @@ type Version struct {
 	ProjectID   int    `json:"projectId"`
 }
 
+// VersionCounts contains info about issues counts
+type VersionCounts struct {
+	IssuesFixed    int `json:"issuesFixedCount"`
+	IssuesAffected int `json:"issuesAffectedCount"`
+}
+
 // VOTES //////////////////////////////////////////////////////////////////////////// //
 
 // VotesInfo contains info about votes
@@ -908,6 +914,18 @@ type HealthCheck struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	IsPassed    bool   `json:"passed"`
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Workflow contains info about workflow
+type Workflow struct {
+	Name             string `json:"name"`
+	Description      string `json:"description"`
+	LastModifiedDate string `json:"lastModifiedDate"`
+	LastModifiedUser string `json:"lastModifiedUser"`
+	Steps            int    `json:"steps"`
+	IsDefault        bool   `json:"default"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
