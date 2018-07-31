@@ -2107,6 +2107,102 @@ func (api *API) GetWorkflow(workflowName string) (*Workflow, error) {
 	}
 }
 
+// GetWorkflowScheme returns the requested workflow scheme to the caller
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e292
+func (api *API) GetWorkflowScheme(schemeID string, returnDraftIfExists bool) (*WorkflowScheme, error) {
+	url := "/rest/api/2/workflowscheme/" + schemeID
+
+	if returnDraftIfExists {
+		url += "?returnDraftIfExists=true"
+	}
+
+	result := &WorkflowScheme{}
+	statusCode, err := api.doRequest(
+		"GET", url,
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetWorkflowSchemeDefault returns the requested draft workflow scheme to the caller
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e184
+func (api *API) GetWorkflowSchemeDefault(schemeID string, returnDraftIfExists bool) (string, error) {
+	url := "/rest/api/2/workflowscheme/" + schemeID + "/default"
+
+	if returnDraftIfExists {
+		url += "?returnDraftIfExists=true"
+	}
+
+	result := &struct {
+		Workflow string `json:"workflow"`
+	}{}
+	statusCode, err := api.doRequest(
+		"GET", url,
+		EmptyParameters{}, result, nil, false,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Workflow, nil
+	case 401:
+		return "", ErrNoAuth
+	case 404:
+		return "", ErrNoContent
+	default:
+		return "", makeUnknownError(statusCode)
+	}
+}
+
+// GetWorkflowSchemeWorkflows returns the workflow mappings or requested mapping to the caller
+// for the passed scheme
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e423
+func (api *API) GetWorkflowSchemeWorkflows(schemeID string, returnDraftIfExists bool) ([]*WorkflowInfo, error) {
+	result := []*WorkflowInfo{}
+	url := "/rest/api/2/workflowscheme/" + schemeID + "/workflow"
+
+	if returnDraftIfExists {
+		url += "?returnDraftIfExists=true"
+	}
+
+	statusCode, err := api.doRequest(
+		"GET", url,
+		EmptyParameters{}, &result, nil, false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result, nil
+	case 401:
+		return nil, ErrNoAuth
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[ARITY]

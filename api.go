@@ -916,7 +916,7 @@ type HealthCheck struct {
 	IsPassed    bool   `json:"passed"`
 }
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+// WORKFLOW ///////////////////////////////////////////////////////////////////////// //
 
 // Workflow contains info about workflow
 type Workflow struct {
@@ -926,6 +926,24 @@ type Workflow struct {
 	LastModifiedUser string `json:"lastModifiedUser"`
 	Steps            int    `json:"steps"`
 	IsDefault        bool   `json:"default"`
+}
+
+// WorkflowInfo contains basic info about workflow
+type WorkflowInfo struct {
+	Workflow         string   `json:"workflow"`
+	IssueTypes       []string `json:"issueTypes"`
+	IsDefaultMapping bool     `json:"defaultMapping"`
+}
+
+// WorkflowScheme contains info about workflow scheme
+type WorkflowScheme struct {
+	ID                int                   `json:"id"`
+	Name              string                `json:"name"`
+	Description       string                `json:"description"`
+	DefaultWorkflow   string                `json:"defaultWorkflow"`
+	IsDraft           bool                  `json:"draft"`
+	IssueTypeMappings map[string]string     `json:"issueTypeMappings"`
+	IssueTypes        map[string]*IssueType `json:"issueTypes"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
