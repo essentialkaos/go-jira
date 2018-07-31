@@ -13,6 +13,8 @@
 
 Currently, this package support only getting data from API (_i.e., you cannot create or modify data using this package_).
 
+_**Note, that this is beta software, so it's entirely possible that there will be some significant bugs. Please report bugs so that we are aware of the issues.**_
+
 ### Installation
 
 Before the initial install allows git to use redirects for [pkg.re](https://github.com/essentialkaos/pkgre) service (_reason why you should do this described [here](https://github.com/essentialkaos/pkgre#git-support)_):
