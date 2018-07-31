@@ -35,6 +35,38 @@ go get -u pkg.re/essentialkaos/go-jira.v1
 
 ### Usage example
 
+```go
+package main
+
+import (
+  "fmt"
+  "pkg.re/essentialkaos/go-jira.v1"
+)
+
+func main() {
+  api, err := jira.NewAPI("https://jira.domain.com", "john", "MySuppaPAssWOrd")
+  api.SetUserAgent("MyApp", "1.2.3")
+
+  if err != nil {
+    fmt.Printf("Error: %v\n", err)
+    return
+  }
+
+  issue, err := api.GetIssue(
+    "SAS-1956", jira.IssueParams{
+      Expand: []string{"changelog"},
+    },
+  )
+
+  if err != nil {
+    fmt.Printf("Error: %v\n", err)
+    return
+  }
+
+  fmt.Println("%-v\n", issue)
+}
+```
+
 ### Build Status
 
 | Branch     | Status |
