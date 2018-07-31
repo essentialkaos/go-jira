@@ -77,6 +77,7 @@ func (s *JiraSuite) TestCustomUnmarshalers(c *C) {
 
 	f := &IssueFields{}
 	err = f.UnmarshalJSON([]byte(`{"timespent":7200,"customfield_10700":"TEST123","resolutiondate":"2018-03-26T17:37:29.805+0300"}`))
+	c.Assert(err, IsNil)
 	c.Assert(f.TimeSpent, Equals, 7200)
 	c.Assert(f.ResolutionDate.Day(), Equals, 26)
 	c.Assert(f.Custom, HasLen, 1)
