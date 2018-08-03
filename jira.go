@@ -35,7 +35,7 @@ var (
 	ErrInitEmptyURL      = errors.New("URL can't be empty")
 	ErrInitEmptyUser     = errors.New("User can't be empty")
 	ErrInitEmptyPassword = errors.New("Password can't be empty")
-	ErrNoPerms           = errors.New("User does not have permission to use confluence")
+	ErrNoPerms           = errors.New("User does not have permission to use Jira")
 	ErrInvalidInput      = errors.New("Input is invalid")
 	ErrWrongLinkID       = errors.New("LinkId is not a valid number, or the remote issue link with the given id does not belong to the given issue")
 	ErrNoAuth            = errors.New("Calling user is not authenticated")
