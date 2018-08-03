@@ -35,7 +35,7 @@ var (
 	ErrInitEmptyURL      = errors.New("URL can't be empty")
 	ErrInitEmptyUser     = errors.New("User can't be empty")
 	ErrInitEmptyPassword = errors.New("Password can't be empty")
-	ErrNoPerms           = errors.New("User does not have permission to use confluence")
+	ErrNoPerms           = errors.New("User does not have permission to use Jira")
 	ErrInvalidInput      = errors.New("Input is invalid")
 	ErrWrongLinkID       = errors.New("LinkId is not a valid number, or the remote issue link with the given id does not belong to the given issue")
 	ErrNoAuth            = errors.New("Calling user is not authenticated")
@@ -2234,14 +2234,7 @@ func (api *API) doRequest(method, uri string, params Parameters, result, body in
 	statusCode := resp.StatusCode()
 
 	if statusCode != 200 && decodeError {
-		errCollection := &ErrorCollection{}
-		err = json.Unmarshal(resp.Body(), errCollection)
-
-		if err != nil {
-			return statusCode, err
-		}
-
-		return statusCode, errCollection.Error()
+		return statusCode, decodeInternalError(resp.Body())
 	}
 
 	if result == nil {
@@ -2279,6 +2272,18 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// decodeInternalError decode internal Jira error
+func decodeInternalError(data []byte) error {
+	ec := &ErrorCollection{}
+	err := json.Unmarshal(data, ec)
+
+	if err != nil {
+		return nil
+	}
+
+	return ec.Error()
+}
 
 // getUserAgent generate user-agent string for client
 func getUserAgent(app, version string) string {
