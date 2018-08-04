@@ -615,60 +615,13 @@ func (api *API) IssuePicker(params IssuePickerParams) ([]*IssuePickerResults, er
 // the key or by the id
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4856
 func (api *API) GetIssueProperties(issueIDOrKey string) ([]*Property, error) {
-	result := &struct {
-		Keys []*Property `json:"keys"`
-	}{}
-	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/properties",
-		EmptyParameters{}, result, nil, true,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	switch statusCode {
-	case 200:
-		return result.Keys, nil
-	case 400:
-		return nil, ErrInvalidInput
-	case 401:
-		return nil, ErrNoAuth
-	case 403:
-		return nil, ErrNoPerms
-	case 404:
-		return nil, ErrNoContent
-	default:
-		return nil, makeUnknownError(statusCode)
-	}
+	return api.getEntityProperties("/rest/api/2/issue/" + issueIDOrKey + "/properties")
 }
 
 // SetIssueProperty sets the value of the specified issue's property
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4889
 func (api *API) SetIssueProperty(issueIDOrKey string, prop *Property) error {
-	statusCode, err := api.doRequest(
-		"PUT", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+prop.Key,
-		EmptyParameters{}, nil, prop, false,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	switch statusCode {
-	case 200, 201:
-		return nil
-	case 400:
-		return ErrInvalidInput
-	case 401:
-		return ErrNoAuth
-	case 403:
-		return ErrNoPerms
-	case 404:
-		return ErrNoContent
-	default:
-		return makeUnknownError(statusCode)
-	}
+	return api.setEntityProperty("/rest/api/2/issue/"+issueIDOrKey+"/properties/"+prop.Key, prop)
 }
 
 // GetIssueProperty returns the value of the property with a given key from the issue
@@ -676,32 +629,7 @@ func (api *API) SetIssueProperty(issueIDOrKey string, prop *Property) error {
 // required to have permissions to read the issue.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4911
 func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error) {
-	result := &struct {
-		Value *Property `json:"value"`
-	}{}
-	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, result, nil, true,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	switch statusCode {
-	case 200:
-		return result.Value, nil
-	case 400:
-		return nil, ErrInvalidInput
-	case 401:
-		return nil, ErrNoAuth
-	case 403:
-		return nil, ErrNoPerms
-	case 404:
-		return nil, ErrNoContent
-	default:
-		return nil, makeUnknownError(statusCode)
-	}
+	return api.getEntityProperty("/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey, propKey)
 }
 
 // DeleteIssueProperty removes the property from the issue identified by the key
@@ -709,29 +637,7 @@ func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error
 // to edit the issue.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4937
 func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
-	statusCode, err := api.doRequest(
-		"DELETE", "/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, nil, nil, false,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	switch statusCode {
-	case 204:
-		return nil
-	case 400:
-		return ErrInvalidInput
-	case 401:
-		return ErrNoAuth
-	case 403:
-		return ErrNoPerms
-	case 404:
-		return ErrNoContent
-	default:
-		return makeUnknownError(statusCode)
-	}
+	return api.deleteEntityProperty("/rest/api/2/issue/"+issueIDOrKey+"/properties/"+propKey, propKey)
 }
 
 // GetIssueLink returns an issue link with the specified id
@@ -1206,60 +1112,13 @@ func (api *API) GetProjectVersion(projectIDOrKey string, params VersionParams) (
 // by the key or by the id
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e881
 func (api *API) GetProjectProperties(projectIDOrKey string) ([]*Property, error) {
-	result := &struct {
-		Keys []*Property `json:"keys"`
-	}{}
-	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/project/"+projectIDOrKey+"/properties",
-		EmptyParameters{}, result, nil, true,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	switch statusCode {
-	case 200:
-		return result.Keys, nil
-	case 400:
-		return nil, ErrInvalidInput
-	case 401:
-		return nil, ErrNoAuth
-	case 403:
-		return nil, ErrNoPerms
-	case 404:
-		return nil, ErrNoContent
-	default:
-		return nil, makeUnknownError(statusCode)
-	}
+	return api.getEntityProperties("/rest/api/2/project/" + projectIDOrKey + "/properties")
 }
 
 // SetProjectProperty sets the value of the specified project's property
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e914
 func (api *API) SetProjectProperty(projectIDOrKey string, prop *Property) error {
-	statusCode, err := api.doRequest(
-		"PUT", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+prop.Key,
-		EmptyParameters{}, nil, prop, false,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	switch statusCode {
-	case 200, 201:
-		return nil
-	case 400:
-		return ErrInvalidInput
-	case 401:
-		return ErrNoAuth
-	case 403:
-		return ErrNoPerms
-	case 404:
-		return ErrNoContent
-	default:
-		return makeUnknownError(statusCode)
-	}
+	return api.setEntityProperty("/rest/api/2/project/"+projectIDOrKey+"/properties/"+prop.Key, prop)
 }
 
 // GetProjectProperty returns the value of the property with a given key from the project
@@ -1267,32 +1126,7 @@ func (api *API) SetProjectProperty(projectIDOrKey string, prop *Property) error 
 // to have permissions to read the project.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e936
 func (api *API) GetProjectProperty(projectIDOrKey, propKey string) (*Property, error) {
-	result := &struct {
-		Value *Property `json:"value"`
-	}{}
-	statusCode, err := api.doRequest(
-		"GET", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, result, nil, true,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	switch statusCode {
-	case 200:
-		return result.Value, nil
-	case 400:
-		return nil, ErrInvalidInput
-	case 401:
-		return nil, ErrNoAuth
-	case 403:
-		return nil, ErrNoPerms
-	case 404:
-		return nil, ErrNoContent
-	default:
-		return nil, makeUnknownError(statusCode)
-	}
+	return api.getEntityProperty("/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey, propKey)
 }
 
 // DeleteProjectProperty removes the property from the project identified by the key
@@ -1300,29 +1134,7 @@ func (api *API) GetProjectProperty(projectIDOrKey, propKey string) (*Property, e
 // administer the project.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e962
 func (api *API) DeleteProjectProperty(projectIDOrKey, propKey string) error {
-	statusCode, err := api.doRequest(
-		"DELETE", "/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey,
-		EmptyParameters{}, nil, nil, false,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	switch statusCode {
-	case 204:
-		return nil
-	case 400:
-		return ErrInvalidInput
-	case 401:
-		return ErrNoAuth
-	case 403:
-		return ErrNoPerms
-	case 404:
-		return ErrNoContent
-	default:
-		return makeUnknownError(statusCode)
-	}
+	return api.deleteEntityProperty("/rest/api/2/project/"+projectIDOrKey+"/properties/"+propKey, propKey)
 }
 
 // GetProjectRoles returns a list of roles in this project with links to full details
@@ -2200,6 +2012,112 @@ func (api *API) GetWorkflowSchemeWorkflows(schemeID string, returnDraftIfExists 
 		return nil, ErrNoContent
 	default:
 		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// getEntityProperties returns all entity (issue/project) properties
+func (api *API) getEntityProperties(url string) ([]*Property, error) {
+	result := &struct {
+		Keys []*Property `json:"keys"`
+	}{}
+
+	statusCode, err := api.doRequest("GET", url, EmptyParameters{}, result, nil, true)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Keys, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// setEntityProperty create or update entity (issue/project) property
+func (api *API) setEntityProperty(url string, prop *Property) error {
+	statusCode, err := api.doRequest("PUT", url, EmptyParameters{}, nil, prop, false)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case 200, 201:
+		return nil
+	case 400:
+		return ErrInvalidInput
+	case 401:
+		return ErrNoAuth
+	case 403:
+		return ErrNoPerms
+	case 404:
+		return ErrNoContent
+	default:
+		return makeUnknownError(statusCode)
+	}
+}
+
+// getEntityProperty returns entity (issue/project) property
+func (api *API) getEntityProperty(url, propKey string) (*Property, error) {
+	result := &struct {
+		Value *Property `json:"value"`
+	}{}
+
+	statusCode, err := api.doRequest("GET", url, EmptyParameters{}, result, nil, true)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return result.Value, nil
+	case 400:
+		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// deleteEntityProperty deletes entity (issue/project) property
+func (api *API) deleteEntityProperty(url, propKey string) error {
+	statusCode, err := api.doRequest("DELETE", url, EmptyParameters{}, nil, nil, false)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case 204:
+		return nil
+	case 400:
+		return ErrInvalidInput
+	case 401:
+		return ErrNoAuth
+	case 403:
+		return ErrNoPerms
+	case 404:
+		return ErrNoContent
+	default:
+		return makeUnknownError(statusCode)
 	}
 }
 
