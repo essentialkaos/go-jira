@@ -160,13 +160,13 @@ type Column struct {
 
 // Configuration contains info about optional features
 type Configuration struct {
-	VotingEnabled             bool                       `json:"votingEnabled"`
-	WatchingEnabled           bool                       `json:"watchingEnabled"`
-	UnassignedIssuesAllowed   bool                       `json:"unassignedIssuesAllowed"`
-	SubTasksEnabled           bool                       `json:"subTasksEnabled"`
-	IssueLinkingEnabled       bool                       `json:"issueLinkingEnabled"`
-	TimeTrackingEnabled       bool                       `json:"timeTrackingEnabled"`
-	AttachmentsEnabled        bool                       `json:"attachmentsEnabled"`
+	IsVotingEnabled           bool                       `json:"votingEnabled"`
+	IsWatchingEnabled         bool                       `json:"watchingEnabled"`
+	IsUnassignedIssuesAllowed bool                       `json:"unassignedIssuesAllowed"`
+	IsSubTasksEnabled         bool                       `json:"subTasksEnabled"`
+	IsIssueLinkingEnabled     bool                       `json:"issueLinkingEnabled"`
+	IsTimeTrackingEnabled     bool                       `json:"timeTrackingEnabled"`
+	IsAttachmentsEnabled      bool                       `json:"attachmentsEnabled"`
 	TimeTrackingConfiguration *TimeTrackingConfiguration `json:"timeTrackingConfiguration"`
 }
 
@@ -513,11 +513,11 @@ type Field struct {
 
 // FieldMeta contains field meta
 type FieldMeta struct {
-	Required        bool              `json:"required"`
 	Name            string            `json:"name"`
-	Operations      []string          `json:"operations"`
 	AutoCompleteURL string            `json:"autoCompleteUrl"`
+	Operations      []string          `json:"operations"`
 	AllowedValues   []*FieldMetaValue `json:"allowedValues"`
+	IsRequired      bool              `json:"required"`
 }
 
 // FieldSchema contains field schema
@@ -548,13 +548,13 @@ type PermissionsParams struct {
 
 // Permission contains info about permission
 type Permission struct {
-	ID             string `json:"id"`
-	Key            string `json:"key"`
-	Name           string `json:"name"`
-	Type           string `json:"type"`
-	Description    string `json:"description"`
-	HavePermission bool   `json:"havePermission"`
-	DeprecatedKey  bool   `json:"deprecatedKey"`
+	ID               string `json:"id"`
+	Key              string `json:"key"`
+	Name             string `json:"name"`
+	Type             string `json:"type"`
+	Description      string `json:"description"`
+	IsHavePermission bool   `json:"havePermission"`
+	IsDeprecatedKey  bool   `json:"deprecatedKey"`
 }
 
 // PROJECTS ///////////////////////////////////////////////////////////////////////// //
@@ -719,8 +719,8 @@ type User struct {
 	DisplayName string      `json:"displayName"`
 	TimeZone    string      `json:"timeZone"`
 	Locale      string      `json:"locale"`
-	Active      bool        `json:"active"`
 	Groups      *UserGroups `json:"groups"`
+	IsActive    bool        `json:"active"`
 }
 
 // UserGroups contains info about user groups
@@ -794,15 +794,21 @@ type WorklogCollection struct {
 
 // Worklog is worklog record
 type Worklog struct {
-	ID               string `json:"id"`
-	Comment          string `json:"comment"`
-	TimeSpent        string `json:"timeSpent"`
-	Created          *Date  `json:"created"`
-	Updated          *Date  `json:"updated"`
-	Started          *Date  `json:"started"`
-	Author           *User  `json:"author"`
-	UpdateAuthor     *User  `json:"updateAuthor"`
-	TimeSpentSeconds int    `json:"timeSpentSeconds"`
+	ID               string         `json:"id"`
+	Comment          string         `json:"comment"`
+	TimeSpent        string         `json:"timeSpent"`
+	Created          *Date          `json:"created"`
+	Updated          *Date          `json:"updated"`
+	Started          *Date          `json:"started"`
+	Author           *WorklogAuthor `json:"author"`
+	UpdateAuthor     *WorklogAuthor `json:"updateAuthor"`
+	TimeSpentSeconds int            `json:"timeSpentSeconds"`
+}
+
+// WorklogAuthor contains info about worklog author
+type WorklogAuthor struct {
+	Key      string `json:"name"`
+	IsActive bool   `json:"active"`
 }
 
 // PICKER /////////////////////////////////////////////////////////////////////////// //
