@@ -794,21 +794,15 @@ type WorklogCollection struct {
 
 // Worklog is worklog record
 type Worklog struct {
-	ID               string         `json:"id"`
-	Comment          string         `json:"comment"`
-	TimeSpent        string         `json:"timeSpent"`
-	Created          *Date          `json:"created"`
-	Updated          *Date          `json:"updated"`
-	Started          *Date          `json:"started"`
-	Author           *WorklogAuthor `json:"author"`
-	UpdateAuthor     *WorklogAuthor `json:"updateAuthor"`
-	TimeSpentSeconds int            `json:"timeSpentSeconds"`
-}
-
-// WorklogAuthor contains info about worklog author
-type WorklogAuthor struct {
-	Key      string `json:"name"`
-	IsActive bool   `json:"active"`
+	ID               string `json:"id"`
+	Comment          string `json:"comment"`
+	TimeSpent        string `json:"timeSpent"`
+	Created          *Date  `json:"created"`
+	Updated          *Date  `json:"updated"`
+	Started          *Date  `json:"started"`
+	Author           *User  `json:"author"`
+	UpdateAuthor     *User  `json:"updateAuthor"`
+	TimeSpentSeconds int    `json:"timeSpentSeconds"`
 }
 
 // PICKER /////////////////////////////////////////////////////////////////////////// //
