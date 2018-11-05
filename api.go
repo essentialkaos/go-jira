@@ -61,6 +61,12 @@ const (
 	PERMISSION_WORKLOG_EDIT_OWN                  = "WORKLOG_EDIT_OWN"
 )
 
+// Roles actors
+const (
+	ROLE_ACTOR_USER  = "atlassian-user-role-actor"
+	ROLE_ACTOR_GROUP = "atlassian-group-role-actor"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Parameters is interface for params structs
