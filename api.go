@@ -756,12 +756,15 @@ type VersionCollection struct {
 
 // Version contains version info
 type Version struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	IsArchived  bool   `json:"archived"`
-	IsReleased  bool   `json:"released"`
-	ProjectID   int    `json:"projectId"`
+	ID              string `json:"id"`
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	UserReleaseDate string `json:"userReleaseDate"`
+	IsArchived      bool   `json:"archived"`
+	IsReleased      bool   `json:"released"`
+	IsOverdue       bool   `json:"overdue"`
+	ProjectID       int    `json:"projectId"`
+	ReleaseDate     *Date  `json:"releaseDate"`
 }
 
 // VersionCounts contains info about issues counts
