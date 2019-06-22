@@ -12,7 +12,7 @@
 
 <br/>
 
-`go-jira` is a Go package for working with [Jira REST API](https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/).
+`go-jira` is a Go package for working with [Jira REST API](https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/).
 
 Currently, this package support only getting data from API (_i.e., you cannot create or modify data using this package_).
 
