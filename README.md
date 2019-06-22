@@ -8,7 +8,7 @@
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
-<p align="center"><a href="#installation">Installation</a> • <a href="#usage-example">Usage example</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#installation">Installation</a> • <a href="#compatibility">Compatibility</a> • <a href="#usage-example">Usage example</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
 
 <br/>
 
@@ -37,6 +37,13 @@ For update to latest stable release, do:
 ```
 go get -u pkg.re/essentialkaos/go-jira.v2
 ```
+
+### Compatibility
+
+| Version | `6.x` | `7.x`   | `8.x`   | `cloud` |
+|---------|-------|---------|---------|---------|
+| `1.x`   | Full  | Partial | Partial | No      |
+| `2.x`   | Full  | Partial | Partial | No      |
 
 ### Usage example
 
