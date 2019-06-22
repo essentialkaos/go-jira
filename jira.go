@@ -95,6 +95,8 @@ func (api *API) GetConfiguration() (*Configuration, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 403:
 		return nil, ErrNoPerms
 	default:
@@ -124,6 +126,8 @@ func (api *API) GetServerInfo(DoHealthCheck bool) (*ServerInfo, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -146,6 +150,8 @@ func (api *API) GetColumns() ([]*Column, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 403:
 		return nil, ErrNoPerms
 	case 500:
@@ -171,6 +177,8 @@ func (api *API) GetDashboards(params DashboardParams) (*DashboardCollection, err
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -192,6 +200,8 @@ func (api *API) GetDashboard(dashboardID string) (*Dashboard, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -215,6 +225,8 @@ func (api *API) GetFields() ([]*Field, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -238,6 +250,8 @@ func (api *API) GetFilter(filterID string, params ExpandParameters) (*Filter, er
 		return result, nil
 	case 400:
 		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -263,6 +277,8 @@ func (api *API) GetFilterDefaultScope() (string, error) {
 		return result.Scope, nil
 	case 400:
 		return "", ErrGenReponse
+	case 401:
+		return "", ErrNoAuth
 	default:
 		return "", makeUnknownError(statusCode)
 	}
@@ -284,6 +300,8 @@ func (api *API) GetFilterFavourites(params ExpandParameters) ([]*Filter, error) 
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -305,6 +323,8 @@ func (api *API) GetIssue(issueIDOrKey string, params IssueParams) (*Issue, error
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -328,6 +348,8 @@ func (api *API) GetIssueComments(issueIDOrKey string, params ExpandParameters) (
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -351,6 +373,8 @@ func (api *API) GetIssueComment(issueIDOrKey, commentID string, params ExpandPar
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -374,6 +398,8 @@ func (api *API) GetIssueMeta(issueIDOrKey string) (*IssueMeta, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -457,6 +483,8 @@ func (api *API) GetIssueTransitions(issueIDOrKey string, params TransitionsParam
 	switch statusCode {
 	case 200:
 		return result.Transitions, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -480,6 +508,8 @@ func (api *API) GetIssueVotes(issueIDOrKey string) (*VotesInfo, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -503,6 +533,8 @@ func (api *API) GetIssueWatchers(issueIDOrKey string) (*WatchersInfo, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -526,6 +558,8 @@ func (api *API) GetIssueWorklogs(issueIDOrKey string) (*WorklogCollection, error
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -549,6 +583,8 @@ func (api *API) GetIssueWorklog(issueIDOrKey, worklogID string) (*Worklog, error
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -577,6 +613,8 @@ func (api *API) GetCreateMeta(params CreateMetaParams) ([]*Project, error) {
 	switch statusCode {
 	case 200:
 		return result.Projects, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 403:
 		return nil, ErrNoPerms
 	default:
@@ -604,6 +642,8 @@ func (api *API) IssuePicker(params IssuePickerParams) ([]*IssuePickerResults, er
 	switch statusCode {
 	case 200:
 		return result.Sections, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 403:
 		return nil, ErrNoPerms
 	default:
@@ -691,6 +731,8 @@ func (api *API) GetIssueLinkTypes() ([]*LinkType, error) {
 	switch statusCode {
 	case 200:
 		return result.IssueLinkTypes, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -715,6 +757,8 @@ func (api *API) GetIssueLinkType(linkTypeID string) (*LinkType, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -738,6 +782,8 @@ func (api *API) GetIssueTypes() ([]*IssueType, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -759,6 +805,8 @@ func (api *API) GetIssueType(issueTypeID string) (*IssueType, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -786,6 +834,8 @@ func (api *API) GetIssueTypeAlternatives(issueTypeID string) ([]*IssueType, erro
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -838,6 +888,8 @@ func (api *API) GetAutocompleteSuggestions(params SuggestionParams) ([]Suggestio
 	switch statusCode {
 	case 200:
 		return result.Result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -865,6 +917,8 @@ func (api *API) GetMyPermissions(params PermissionsParams) (map[string]*Permissi
 		return result.Permissions, nil
 	case 400:
 		return nil, ErrInvalidInput
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -888,6 +942,8 @@ func (api *API) GetMyself() (*User, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
@@ -913,6 +969,8 @@ func (api *API) GetPriorities() ([]*Priority, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -934,6 +992,8 @@ func (api *API) GetPriority(priorityID string) (*Priority, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -959,6 +1019,8 @@ func (api *API) GetProjects(params ExpandParameters) ([]*Project, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 500:
 		return nil, ErrGenReponse
 	default:
@@ -982,6 +1044,8 @@ func (api *API) GetProject(projectIDOrKey string, params ExpandParameters) (*Pro
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1006,6 +1070,8 @@ func (api *API) GetProjectAvatars(projectIDOrKey string) (*Avatars, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	case 500:
@@ -1032,6 +1098,8 @@ func (api *API) GetProjectComponents(projectIDOrKey string) ([]*Component, error
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1057,6 +1125,8 @@ func (api *API) GetProjectStatuses(projectIDOrKey string) ([]*IssueType, error) 
 		return result, nil
 	case 400:
 		return nil, ErrNoContent
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1101,6 +1171,8 @@ func (api *API) GetProjectVersion(projectIDOrKey string, params VersionParams) (
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1153,6 +1225,8 @@ func (api *API) GetProjectRoles(projectIDOrKey string) (map[string]string, error
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1176,6 +1250,8 @@ func (api *API) GetProjectRole(projectIDOrKey, roleID string) (*Role, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1199,6 +1275,8 @@ func (api *API) GetProjectCategories() ([]*ProjectCategory, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 500:
 		return nil, ErrGenReponse
 	default:
@@ -1222,6 +1300,8 @@ func (api *API) GetProjectCategory(categoryID string) (*ProjectCategory, error) 
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1245,6 +1325,8 @@ func (api *API) ValidateProjectKey(projectKey string) error {
 	switch statusCode {
 	case 200:
 		return result.Error()
+	case 401:
+		return ErrNoAuth
 	default:
 		return makeUnknownError(statusCode)
 	}
@@ -1266,6 +1348,8 @@ func (api *API) GetResolutions() ([]*Resolution, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1287,6 +1371,8 @@ func (api *API) GetResolution(resolutionID string) (*Resolution, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1357,6 +1443,8 @@ func (api *API) GetStatuses() ([]*Status, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1380,6 +1468,8 @@ func (api *API) GetStatus(statusIDOrName string) (*Status, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1403,6 +1493,8 @@ func (api *API) GetStatusCategories() ([]*StatusCategory, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1427,6 +1519,8 @@ func (api *API) GetStatusCategory(caregoryIDOrName string) (*StatusCategory, err
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1624,6 +1718,8 @@ func (api *API) GroupPicker(params GroupPickerParams) (*GroupPickerResults, erro
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1645,6 +1741,8 @@ func (api *API) GroupUserPicker(params GroupUserPickerParams) (*GroupUserPickerR
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1668,6 +1766,8 @@ func (api *API) Search(params SearchParams) (*SearchResults, error) {
 		return result, nil
 	case 400:
 		return result, ErrInvalidInput
+	case 401:
+		return result, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1715,6 +1815,8 @@ func (api *API) GetSecurityLevel(levelID string) (*SecurityLevel, error) {
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1814,6 +1916,8 @@ func (api *API) GetVersion(versionID string, params ExpandParameters) (*Version,
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 401:
+		return nil, ErrNoAuth
 	case 404:
 		return nil, ErrNoContent
 	default:
@@ -1841,6 +1945,8 @@ func (api *API) GetVersionRelatedCounts(versionID string) (int, int, error) {
 	switch statusCode {
 	case 200:
 		return result.IssuesFixed, result.IssuesAffected, nil
+	case 401:
+		return 0, 0, ErrNoAuth
 	case 404:
 		return 0, 0, ErrNoContent
 	default:
@@ -1866,6 +1972,8 @@ func (api *API) GetVersionUnresolvedCount(versionID string) (int, error) {
 	switch statusCode {
 	case 200:
 		return result.IssuesUnresolvedCount, nil
+	case 401:
+		return 0, ErrNoAuth
 	case 404:
 		return 0, ErrNoContent
 	default:

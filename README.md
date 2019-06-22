@@ -8,11 +8,11 @@
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
-<p align="center"><a href="#installation">Installation</a> • <a href="#usage-example">Usage example</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#installation">Installation</a> • <a href="#compatibility">Compatibility</a> • <a href="#usage-example">Usage example</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
 
 <br/>
 
-`go-jira` is a Go package for working with [Jira REST API](https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/).
+`go-jira` is a Go package for working with [Jira REST API](https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/).
 
 Currently, this package support only getting data from API (_i.e., you cannot create or modify data using this package_).
 
@@ -37,6 +37,13 @@ For update to latest stable release, do:
 ```
 go get -u pkg.re/essentialkaos/go-jira.v2
 ```
+
+### Compatibility
+
+| Version | `6.x` | `7.x`   | `8.x`   | `cloud` |
+|---------|-------|---------|---------|---------|
+| `1.x`   | Full  | Partial | Partial | No      |
+| `2.x`   | Full  | Partial | Partial | No      |
 
 ### Usage example
 
