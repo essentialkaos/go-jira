@@ -225,47 +225,50 @@ type Issue struct {
 
 // IssueFields contains all available issue fields
 type IssueFields struct {
-	TimeSpent                     int                        `json:"timespent"`
-	TimeEstimate                  int                        `json:"timeestimate"`
-	TimeOriginalEstimate          int                        `json:"timeoriginalestimate"`
-	AggregateTimeSpent            int                        `json:"aggregatetimespent"`
-	AggregateTimeEstimate         int                        `json:"aggregatetimeestimate"`
-	AggregateTimeOriginalEstimate int                        `json:"aggregatetimeoriginalestimate"`
-	WorkRatio                     int                        `json:"workratio"`
-	Summary                       string                     `json:"summary"`
-	Description                   string                     `json:"description"`
-	Environment                   string                     `json:"environment"`
-	Created                       *Date                      `json:"created"`
-	DueDate                       *Date                      `json:"duedate"`
-	LastViewed                    *Date                      `json:"lastViewed"`
-	ResolutionDate                *Date                      `json:"resolutiondate"`
-	Updated                       *Date                      `json:"updated"`
-	Creator                       *User                      `json:"creator"`
-	Reporter                      *User                      `json:"reporter"`
-	Assignee                      *User                      `json:"assignee"`
-	AggregateProgress             *Progress                  `json:"aggregateprogress"`
-	Progress                      *Progress                  `json:"progress"`
-	IssueType                     *IssueType                 `json:"issuetype"`
-	Parent                        *Issue                     `json:"parent"`
-	Project                       *Project                   `json:"project"`
-	Resolution                    *Resolution                `json:"resolution"`
-	TimeTracking                  *TimeTracking              `json:"timetracking"`
-	Watches                       *Watches                   `json:"watches"`
-	Priority                      *Priority                  `json:"priority"`
-	Comments                      *CommentCollection         `json:"comment"`
-	Worklogs                      *WorklogCollection         `json:"worklog"`
-	Votes                         *VotesInfo                 `json:"votes"`
-	Status                        *Status                    `json:"status"`
-	Security                      *SecurityLevel             `json:"security"`
-	Labels                        []string                   `json:"labels"`
-	Components                    []*Component               `json:"components"`
-	Attachments                   []*Attachment              `json:"attachment"`
-	SubTasks                      []*Issue                   `json:"subtasks"`
-	Versions                      []*Version                 `json:"versions"`
-	FixVersions                   []*Version                 `json:"fixVersions"`
-	Issuelinks                    []*Link                    `json:"issuelinks"`
-	Custom                        map[string]json.RawMessage `json:"-"`
+	TimeSpent                     int                `json:"timespent"`
+	TimeEstimate                  int                `json:"timeestimate"`
+	TimeOriginalEstimate          int                `json:"timeoriginalestimate"`
+	AggregateTimeSpent            int                `json:"aggregatetimespent"`
+	AggregateTimeEstimate         int                `json:"aggregatetimeestimate"`
+	AggregateTimeOriginalEstimate int                `json:"aggregatetimeoriginalestimate"`
+	WorkRatio                     int                `json:"workratio"`
+	Summary                       string             `json:"summary"`
+	Description                   string             `json:"description"`
+	Environment                   string             `json:"environment"`
+	Created                       *Date              `json:"created"`
+	DueDate                       *Date              `json:"duedate"`
+	LastViewed                    *Date              `json:"lastViewed"`
+	ResolutionDate                *Date              `json:"resolutiondate"`
+	Updated                       *Date              `json:"updated"`
+	Creator                       *User              `json:"creator"`
+	Reporter                      *User              `json:"reporter"`
+	Assignee                      *User              `json:"assignee"`
+	AggregateProgress             *Progress          `json:"aggregateprogress"`
+	Progress                      *Progress          `json:"progress"`
+	IssueType                     *IssueType         `json:"issuetype"`
+	Parent                        *Issue             `json:"parent"`
+	Project                       *Project           `json:"project"`
+	Resolution                    *Resolution        `json:"resolution"`
+	TimeTracking                  *TimeTracking      `json:"timetracking"`
+	Watches                       *Watches           `json:"watches"`
+	Priority                      *Priority          `json:"priority"`
+	Comments                      *CommentCollection `json:"comment"`
+	Worklogs                      *WorklogCollection `json:"worklog"`
+	Votes                         *VotesInfo         `json:"votes"`
+	Status                        *Status            `json:"status"`
+	Security                      *SecurityLevel     `json:"security"`
+	Labels                        []string           `json:"labels"`
+	Components                    []*Component       `json:"components"`
+	Attachments                   []*Attachment      `json:"attachment"`
+	SubTasks                      []*Issue           `json:"subtasks"`
+	Versions                      []*Version         `json:"versions"`
+	FixVersions                   []*Version         `json:"fixVersions"`
+	Issuelinks                    []*Link            `json:"issuelinks"`
+	Custom                        CustomFieldsStore  `json:"-"`
 }
+
+// CustomFieldsStore is store for custom fields data
+type CustomFieldsStore map[string]json.RawMessage
 
 // IssueType contains info about issue type
 type IssueType struct {
@@ -957,7 +960,12 @@ type WorkflowScheme struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// UnmarshalJSON is custom Date format unmarshaler
+// nullBytes is a byte slice with "null" word
+var nullBytes = []byte(`null`)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// UnmarshalJSON is a custom Date format unmarshaler
 func (d *Date) UnmarshalJSON(b []byte) error {
 	var err error
 
@@ -974,7 +982,7 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// UnmarshalJSON is custom IssueFields unmarshaler
+// UnmarshalJSON is a custom IssueFields unmarshaler
 func (f *IssueFields) UnmarshalJSON(b []byte) error {
 	f.Custom = map[string]json.RawMessage{}
 
@@ -1004,6 +1012,10 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 		} else {
 			if !strings.HasPrefix(key, "customfield_") {
 				delete(f.Custom, key)
+			} else {
+				if bytes.Equal(chunk, nullBytes) {
+					delete(f.Custom, key)
+				}
 			}
 		}
 	}
@@ -1013,7 +1025,23 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Error return first error extracted from error collection
+// Has returns true if custom field with given name exists in store
+func (s CustomFieldsStore) Has(name string) bool {
+	return s[name] != nil
+}
+
+// Unmarshal unmarshals custom field data
+func (s CustomFieldsStore) Unmarshal(name string, v interface{}) error {
+	if s[name] == nil {
+		return errors.New("Custom field with name " + name + " does not exist")
+	}
+
+	return json.Unmarshal(s[name], v)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Error returnsa  first error extracted from error collection
 func (e *ErrorCollection) Error() error {
 	if len(e.ErrorMessages) > 0 {
 		return errors.New(e.ErrorMessages[0])
@@ -1028,102 +1056,102 @@ func (e *ErrorCollection) Error() error {
 	return nil
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p EmptyParameters) ToQuery() string {
 	return ""
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p ExpandParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p DashboardParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p GroupParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p IssueParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p RemoteLinkParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p CreateMetaParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p PermissionsParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p IssuePickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p GroupPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p GroupUserPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p ScreenParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p SearchParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p SuggestionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p TransitionsParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p VersionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserPermissionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserSearchParams) ToQuery() string {
 	return paramsToQuery(p)
 }
