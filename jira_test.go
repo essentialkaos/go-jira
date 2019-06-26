@@ -43,7 +43,7 @@ func (s *JiraSuite) TestParamsEncoding(c *C) {
 		ProjectID:  []string{"1", "2"},
 	}
 
-	c.Assert(p.ToQuery(), Equals, `query=ABCD&showAvatar=true&projectId=1&projectId=2`)
+	c.Assert(p.ToQuery(), Equals, `projectId=1&projectId=2&query=ABCD&showAvatar=true`)
 
 	p = SearchParams{
 		JQL:                    "ABCD",
@@ -52,7 +52,7 @@ func (s *JiraSuite) TestParamsEncoding(c *C) {
 		Expand:                 []string{"test1,test2"},
 	}
 
-	c.Assert(p.ToQuery(), Equals, `jql=ABCD&startAt=1&validateQuery=false&expand=test1%2Ctest2`)
+	c.Assert(p.ToQuery(), Equals, `expand=test1%2Ctest2&jql=ABCD&startAt=1&validateQuery=false`)
 }
 
 func (s *JiraSuite) TestCustomUnmarshalers(c *C) {
