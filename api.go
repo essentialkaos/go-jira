@@ -1030,6 +1030,11 @@ func (s CustomFieldsStore) Has(name string) bool {
 	return s[name] != nil
 }
 
+// Get returns custom field data as a string
+func (s CustomFieldsStore) Get(name string) string {
+	return string(s[name])
+}
+
 // Unmarshal unmarshals custom field data
 func (s CustomFieldsStore) Unmarshal(name string, v interface{}) error {
 	if s[name] == nil {
