@@ -106,9 +106,9 @@ type Avatars struct {
 // Avatar contains info about project/user avatar
 type Avatar struct {
 	ID             string     `json:"id"`
+	AvatarURL      *AvatarURL `json:"urls"`
 	IsSystemAvatar bool       `json:"isSystemAvatar"`
 	IsSelected     bool       `json:"isSelected"`
-	AvatarURL      *AvatarURL `json:"urls"`
 }
 
 // AUTOCOMPLETE ///////////////////////////////////////////////////////////////////// //
@@ -166,6 +166,7 @@ type Column struct {
 
 // Configuration contains info about optional features
 type Configuration struct {
+	TimeTrackingConfiguration *TimeTrackingConfiguration `json:"timeTrackingConfiguration"`
 	IsVotingEnabled           bool                       `json:"votingEnabled"`
 	IsWatchingEnabled         bool                       `json:"watchingEnabled"`
 	IsUnassignedIssuesAllowed bool                       `json:"unassignedIssuesAllowed"`
@@ -173,7 +174,6 @@ type Configuration struct {
 	IsIssueLinkingEnabled     bool                       `json:"issueLinkingEnabled"`
 	IsTimeTrackingEnabled     bool                       `json:"timeTrackingEnabled"`
 	IsAttachmentsEnabled      bool                       `json:"attachmentsEnabled"`
-	TimeTrackingConfiguration *TimeTrackingConfiguration `json:"timeTrackingConfiguration"`
 }
 
 // TimeTrackingConfiguration contains detailed info about time tracking configuration
@@ -225,57 +225,60 @@ type Issue struct {
 
 // IssueFields contains all available issue fields
 type IssueFields struct {
-	TimeSpent                     int                        `json:"timespent"`
-	TimeEstimate                  int                        `json:"timeestimate"`
-	TimeOriginalEstimate          int                        `json:"timeoriginalestimate"`
-	AggregateTimeSpent            int                        `json:"aggregatetimespent"`
-	AggregateTimeEstimate         int                        `json:"aggregatetimeestimate"`
-	AggregateTimeOriginalEstimate int                        `json:"aggregatetimeoriginalestimate"`
-	WorkRatio                     int                        `json:"workratio"`
-	Summary                       string                     `json:"summary"`
-	Description                   string                     `json:"description"`
-	Environment                   string                     `json:"environment"`
-	Created                       *Date                      `json:"created"`
-	DueDate                       *Date                      `json:"duedate"`
-	LastViewed                    *Date                      `json:"lastViewed"`
-	ResolutionDate                *Date                      `json:"resolutiondate"`
-	Updated                       *Date                      `json:"updated"`
-	Creator                       *User                      `json:"creator"`
-	Reporter                      *User                      `json:"reporter"`
-	Assignee                      *User                      `json:"assignee"`
-	AggregateProgress             *Progress                  `json:"aggregateprogress"`
-	Progress                      *Progress                  `json:"progress"`
-	IssueType                     *IssueType                 `json:"issuetype"`
-	Parent                        *Issue                     `json:"parent"`
-	Project                       *Project                   `json:"project"`
-	Resolution                    *Resolution                `json:"resolution"`
-	TimeTracking                  *TimeTracking              `json:"timetracking"`
-	Watches                       *Watches                   `json:"watches"`
-	Priority                      *Priority                  `json:"priority"`
-	Comments                      *CommentCollection         `json:"comment"`
-	Worklogs                      *WorklogCollection         `json:"worklog"`
-	Votes                         *VotesInfo                 `json:"votes"`
-	Status                        *Status                    `json:"status"`
-	Security                      *SecurityLevel             `json:"security"`
-	Labels                        []string                   `json:"labels"`
-	Components                    []*Component               `json:"components"`
-	Attachments                   []*Attachment              `json:"attachment"`
-	SubTasks                      []*Issue                   `json:"subtasks"`
-	Versions                      []*Version                 `json:"versions"`
-	FixVersions                   []*Version                 `json:"fixVersions"`
-	Issuelinks                    []*Link                    `json:"issuelinks"`
-	Custom                        map[string]json.RawMessage `json:"-"`
+	TimeSpent                     int                `json:"timespent"`
+	TimeEstimate                  int                `json:"timeestimate"`
+	TimeOriginalEstimate          int                `json:"timeoriginalestimate"`
+	AggregateTimeSpent            int                `json:"aggregatetimespent"`
+	AggregateTimeEstimate         int                `json:"aggregatetimeestimate"`
+	AggregateTimeOriginalEstimate int                `json:"aggregatetimeoriginalestimate"`
+	WorkRatio                     int                `json:"workratio"`
+	Summary                       string             `json:"summary"`
+	Description                   string             `json:"description"`
+	Environment                   string             `json:"environment"`
+	Created                       *Date              `json:"created"`
+	DueDate                       *Date              `json:"duedate"`
+	LastViewed                    *Date              `json:"lastViewed"`
+	ResolutionDate                *Date              `json:"resolutiondate"`
+	Updated                       *Date              `json:"updated"`
+	Creator                       *User              `json:"creator"`
+	Reporter                      *User              `json:"reporter"`
+	Assignee                      *User              `json:"assignee"`
+	AggregateProgress             *Progress          `json:"aggregateprogress"`
+	Progress                      *Progress          `json:"progress"`
+	IssueType                     *IssueType         `json:"issuetype"`
+	Parent                        *Issue             `json:"parent"`
+	Project                       *Project           `json:"project"`
+	Resolution                    *Resolution        `json:"resolution"`
+	TimeTracking                  *TimeTracking      `json:"timetracking"`
+	Watches                       *Watches           `json:"watches"`
+	Priority                      *Priority          `json:"priority"`
+	Comments                      *CommentCollection `json:"comment"`
+	Worklogs                      *WorklogCollection `json:"worklog"`
+	Votes                         *VotesInfo         `json:"votes"`
+	Status                        *Status            `json:"status"`
+	Security                      *SecurityLevel     `json:"security"`
+	Labels                        []string           `json:"labels"`
+	Components                    []*Component       `json:"components"`
+	Attachments                   []*Attachment      `json:"attachment"`
+	SubTasks                      []*Issue           `json:"subtasks"`
+	Versions                      []*Version         `json:"versions"`
+	FixVersions                   []*Version         `json:"fixVersions"`
+	Issuelinks                    []*Link            `json:"issuelinks"`
+	Custom                        CustomFieldsStore  `json:"-"`
 }
+
+// CustomFieldsStore is store for custom fields data
+type CustomFieldsStore map[string]json.RawMessage
 
 // IssueType contains info about issue type
 type IssueType struct {
+	Statuses    []*Status `json:"statuses"`
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	IconURL     string    `json:"iconUrl"`
 	AvatarID    int       `json:"avatarId"`
 	IsSubTask   bool      `json:"subtask"`
-	Statuses    []*Status `json:"statuses"`
 }
 
 // Priority contains priority info
@@ -316,11 +319,11 @@ type Component struct {
 	Description         string `json:"description"`
 	AssigneeType        string `json:"assigneeType"`
 	RealAssigneeType    string `json:"realAssigneeType"`
+	Project             string `json:"project"`
 	Assignee            *User  `json:"assignee"`
 	RealAssignee        *User  `json:"realAssignee"`
-	IsAssigneeTypeValid bool   `json:"isAssigneeTypeValid"`
-	Project             string `json:"project"`
 	ProjectID           int    `json:"projectId"`
+	IsAssigneeTypeValid bool   `json:"isAssigneeTypeValid"`
 }
 
 // Progress contains info about issue progress
@@ -380,17 +383,17 @@ type Comment struct {
 
 // Filter contains info about filter
 type Filter struct {
+	SharePermissions []*FilterSharePermission `json:"sharePermissions"`
 	ID               string                   `json:"id"`
 	Name             string                   `json:"name"`
 	Description      string                   `json:"description"`
 	JQL              string                   `json:"jql"`
 	ViewURL          string                   `json:"viewUrl"`
 	SearchURL        string                   `json:"searchUrl"`
-	IsFavourite      bool                     `json:"favourite"`
 	Owner            *User                    `json:"owner"`
 	SharedUsers      *UserCollection          `json:"sharedUsers"`
 	Subscriptions    *FilterSubscriptions     `json:"subscriptions"`
-	SharePermissions []*FilterSharePermission `json:"sharePermissions"`
+	IsFavourite      bool                     `json:"favourite"`
 }
 
 // FilterSharePermission contains info about share permission
@@ -507,14 +510,14 @@ type IssueMeta struct {
 
 // Field contains info about field
 type Field struct {
+	ClauseNames  []string     `json:"clauseNames"`
 	ID           string       `json:"id"`
 	Name         string       `json:"name"`
+	Schema       *FieldSchema `json:"schema"`
 	IsCustom     bool         `json:"custom"`
 	IsOrderable  bool         `json:"orderable"`
 	IsNavigable  bool         `json:"navigable"`
 	IsSearchable bool         `json:"searchable"`
-	ClauseNames  []string     `json:"clauseNames"`
-	Schema       *FieldSchema `json:"schema"`
 }
 
 // FieldMeta contains field meta
@@ -601,12 +604,12 @@ type ProjectCategory struct {
 
 // SearchParams is params for fetching search results
 type SearchParams struct {
+	Fields                 []string `query:"fields"`
+	Expand                 []string `query:"expand"`
 	JQL                    string   `query:"jql"`
 	StartAt                int      `query:"startAt"`
 	MaxResults             int      `query:"maxResults"`
 	DisableQueryValidation bool     `query:"validateQuery,reverse"`
-	Fields                 []string `query:"fields"`
-	Expand                 []string `query:"expand"`
 }
 
 // SearchResults contains search result
@@ -747,11 +750,11 @@ type VersionParams struct {
 
 // VersionCollection is version collection
 type VersionCollection struct {
+	Data       []*Version `json:"values"`
 	StartAt    int        `json:"startAt"`
 	MaxResults int        `json:"maxResults"`
 	Total      int        `json:"total"`
 	IsLast     bool       `json:"isLast"`
-	Data       []*Version `json:"values"`
 }
 
 // Version contains version info
@@ -760,11 +763,11 @@ type Version struct {
 	Name            string `json:"name"`
 	Description     string `json:"description"`
 	UserReleaseDate string `json:"userReleaseDate"`
+	ProjectID       int    `json:"projectId"`
+	ReleaseDate     *Date  `json:"releaseDate"`
 	IsArchived      bool   `json:"archived"`
 	IsReleased      bool   `json:"released"`
 	IsOverdue       bool   `json:"overdue"`
-	ProjectID       int    `json:"projectId"`
-	ReleaseDate     *Date  `json:"releaseDate"`
 }
 
 // VersionCounts contains info about issues counts
@@ -777,18 +780,18 @@ type VersionCounts struct {
 
 // VotesInfo contains info about votes
 type VotesInfo struct {
+	Voters   []*User `json:"voters"`
 	Votes    int     `json:"votes"`
 	HasVoted bool    `json:"hasVoted"`
-	Voters   []*User `json:"voters"`
 }
 
 // WATCHERS ///////////////////////////////////////////////////////////////////////// //
 
 // WatchersInfo contains info about watchers
 type WatchersInfo struct {
-	IsWatching bool    `json:"isWatching"`
-	WatchCount int     `json:"watchCount"`
 	Watchers   []*User `json:"watchers"`
+	WatchCount int     `json:"watchCount"`
+	IsWatching bool    `json:"isWatching"`
 }
 
 // WORK LOG ///////////////////////////////////////////////////////////////////////// //
@@ -866,12 +869,12 @@ type GroupInfo struct {
 
 // GroupUserPickerParams is params for fetching data from user/group picker
 type GroupUserPickerParams struct {
-	Query       string   `query:"query"`
-	MaxResults  int      `query:"maxResults"`
-	ShowAvatar  bool     `query:"showAvatar"`
-	FieldID     string   `query:"fieldId"`
 	ProjectID   []string `query:"projectId,unwrap"`
 	IssueTypeID []string `query:"issueTypeId,unwrap"`
+	Query       string   `query:"query"`
+	FieldID     string   `query:"fieldId"`
+	MaxResults  int      `query:"maxResults"`
+	ShowAvatar  bool     `query:"showAvatar"`
 }
 
 // GroupUserPickerResults contains user/group picker response data
@@ -946,18 +949,23 @@ type WorkflowInfo struct {
 
 // WorkflowScheme contains info about workflow scheme
 type WorkflowScheme struct {
-	ID                int                   `json:"id"`
 	Name              string                `json:"name"`
 	Description       string                `json:"description"`
 	DefaultWorkflow   string                `json:"defaultWorkflow"`
-	IsDraft           bool                  `json:"draft"`
+	ID                int                   `json:"id"`
 	IssueTypeMappings map[string]string     `json:"issueTypeMappings"`
 	IssueTypes        map[string]*IssueType `json:"issueTypes"`
+	IsDraft           bool                  `json:"draft"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// UnmarshalJSON is custom Date format unmarshaler
+// nullBytes is a byte slice with "null" word
+var nullBytes = []byte(`null`)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// UnmarshalJSON is a custom Date format unmarshaler
 func (d *Date) UnmarshalJSON(b []byte) error {
 	var err error
 
@@ -974,7 +982,7 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// UnmarshalJSON is custom IssueFields unmarshaler
+// UnmarshalJSON is a custom IssueFields unmarshaler
 func (f *IssueFields) UnmarshalJSON(b []byte) error {
 	f.Custom = map[string]json.RawMessage{}
 
@@ -1004,6 +1012,10 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 		} else {
 			if !strings.HasPrefix(key, "customfield_") {
 				delete(f.Custom, key)
+			} else {
+				if bytes.Equal(chunk, nullBytes) {
+					delete(f.Custom, key)
+				}
 			}
 		}
 	}
@@ -1013,7 +1025,28 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Error return first error extracted from error collection
+// Has returns true if custom field with given name exists in store
+func (s CustomFieldsStore) Has(name string) bool {
+	return s[name] != nil
+}
+
+// Get returns custom field data as a string
+func (s CustomFieldsStore) Get(name string) string {
+	return string(s[name])
+}
+
+// Unmarshal unmarshals custom field data
+func (s CustomFieldsStore) Unmarshal(name string, v interface{}) error {
+	if s[name] == nil {
+		return errors.New("Custom field with name " + name + " does not exist")
+	}
+
+	return json.Unmarshal(s[name], v)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Error returnsa  first error extracted from error collection
 func (e *ErrorCollection) Error() error {
 	if len(e.ErrorMessages) > 0 {
 		return errors.New(e.ErrorMessages[0])
@@ -1028,102 +1061,102 @@ func (e *ErrorCollection) Error() error {
 	return nil
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p EmptyParameters) ToQuery() string {
 	return ""
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p ExpandParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p DashboardParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p GroupParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p IssueParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p RemoteLinkParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p CreateMetaParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p PermissionsParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p IssuePickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p GroupPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p GroupUserPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p ScreenParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p SearchParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p SuggestionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p TransitionsParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p VersionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserPickerParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserPermissionParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
-// ToQuery convert params to URL query
+// ToQuery converts params to URL query
 func (p UserSearchParams) ToQuery() string {
 	return paramsToQuery(p)
 }
