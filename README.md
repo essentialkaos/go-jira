@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://godoc.org/pkg.re/essentialkaos/go-jira.v2"><img src="https://godoc.org/pkg.re/essentialkaos/go-jira.v2?status.svg"></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/go-jira"><img src="https://goreportcard.com/badge/github.com/essentialkaos/go-jira"></a>
-  <a href="https://travis-ci.org/essentialkaos/go-jira"><img src="https://travis-ci.org/essentialkaos/go-jira.svg"></a>
+  <a href="https://travis-ci.com/essentialkaos/go-jira"><img src="https://travis-ci.com/essentialkaos/go-jira.svg"></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-go-jira-master"><img alt="codebeat badge" src="https://codebeat.co/badges/29517531-a03f-41a5-8ef3-e77c8867d6d9" /></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
@@ -83,8 +83,8 @@ func main() {
 
 | Branch     | Status |
 |------------|--------|
-| `master` (_Stable_) | [![Build Status](https://travis-ci.org/essentialkaos/go-jira.svg?branch=master)](https://travis-ci.org/essentialkaos/go-jira) |
-| `develop` (_Unstable_) | [![Build Status](https://travis-ci.org/essentialkaos/go-jira.svg?branch=develop)](https://travis-ci.org/essentialkaos/go-jira) |
+| `master` (_Stable_) | [![Build Status](https://travis-ci.com/essentialkaos/go-jira.svg?branch=master)](https://travis-ci.com/essentialkaos/go-jira) |
+| `develop` (_Unstable_) | [![Build Status](https://travis-ci.com/essentialkaos/go-jira.svg?branch=develop)](https://travis-ci.com/essentialkaos/go-jira) |
 
 ### License
 
