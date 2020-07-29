@@ -4,6 +4,7 @@
   <a href="https://godoc.org/pkg.re/essentialkaos/go-jira.v2"><img src="https://godoc.org/pkg.re/essentialkaos/go-jira.v2?status.svg"></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/go-jira"><img src="https://goreportcard.com/badge/github.com/essentialkaos/go-jira"></a>
   <a href="https://travis-ci.com/essentialkaos/go-jira"><img src="https://travis-ci.com/essentialkaos/go-jira.svg"></a>
+  <a href="https://github.com/essentialkaos/go-jira/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/go-jira/workflows/CodeQL/badge.svg" /></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-go-jira-master"><img alt="codebeat badge" src="https://codebeat.co/badges/29517531-a03f-41a5-8ef3-e77c8867d6d9" /></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
