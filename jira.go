@@ -12,6 +12,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/url"
 	"runtime"
 	"time"
 
@@ -1745,6 +1747,51 @@ func (api *API) GroupUserPicker(params GroupUserPickerParams) (*GroupUserPickerR
 		return nil, ErrNoAuth
 	default:
 		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// AddUserToGroup add given user to a group. Returns error
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1792
+func (api *API) AddUserToGroup(groupName, username string) error {
+	statusCode, err := api.doRequest(
+		"POST", "/rest/api/2/group/user?groupname="+url.QueryEscape(groupName),
+		EmptyParameters{}, nil, map[string]string{"name": username}, true,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case http.StatusCreated:
+		return nil
+	case http.StatusUnauthorized:
+		return ErrNoAuth
+	default:
+		return makeUnknownError(statusCode)
+	}
+}
+
+// RemoveUserFromGroup removes given user from a group.
+// https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e1792
+func (api *API) RemoveUserFromGroup(groupName, username string) error {
+	uri := fmt.Sprintf("/rest/api/2/group/user?groupname=%s&username=%s", url.QueryEscape(groupName), url.QueryEscape(username))
+	statusCode, err := api.doRequest(
+		"DELETE", uri,
+		EmptyParameters{}, nil, nil, true,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	switch statusCode {
+	case http.StatusOK:
+		return nil
+	case http.StatusUnauthorized:
+		return ErrNoAuth
+	default:
+		return makeUnknownError(statusCode)
 	}
 }
 
