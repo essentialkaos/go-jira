@@ -1,4 +1,4 @@
-module github.com/essentialkaos/go-jira
+module github.com/essentialkaos/go-jira/v2
 
 go 1.17
 
