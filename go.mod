@@ -1,6 +1,6 @@
-module github.com/essentialkaos/go-jira/v2
+module github.com/essentialkaos/go-jira/v3
 
-go 1.17
+go 1.18
 
 require (
 	github.com/essentialkaos/check v1.4.0
