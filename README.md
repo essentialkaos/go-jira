@@ -15,9 +15,7 @@
 
 `go-jira` is a Go package for working with [Jira REST API](https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/).
 
-Currently, this package support only getting data from API (_i.e., you cannot create or modify data using this package_).
-
-_**Note, that this is beta software, so it's entirely possible that there will be some significant bugs. Please report bugs so that we are aware of the issues.**_
+**▲ Please take note that this package support only getting data from Jira API (_i.e. you cannot create or modify data using this package_).**
 
 ### Installation
 
