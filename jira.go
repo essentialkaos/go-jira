@@ -24,36 +24,35 @@ import (
 type API struct {
 	Client *fasthttp.Client // Client is client for http requests
 
-	url       string // Jira URL
-	basicAuth string // basic auth
+	url  string // Jira URL
+	auth string // Auth data
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // API errors
 var (
-	ErrInitEmptyURL      = errors.New("URL can't be empty")
-	ErrInitEmptyUser     = errors.New("User can't be empty")
-	ErrInitEmptyPassword = errors.New("Password can't be empty")
-	ErrNoPerms           = errors.New("User does not have permission to use Jira")
-	ErrInvalidInput      = errors.New("Input is invalid")
-	ErrWrongLinkID       = errors.New("LinkId is not a valid number, or the remote issue link with the given id does not belong to the given issue")
-	ErrNoAuth            = errors.New("Calling user is not authenticated")
-	ErrNoContent         = errors.New("There is no content with the given ID, or the calling user does not have permission to view the content")
-	ErrGenReponse        = errors.New("Error occurs while generating the response")
+	ErrEmptyURL     = errors.New("URL can't be empty")
+	ErrNoPerms      = errors.New("User does not have permission to use Jira")
+	ErrInvalidInput = errors.New("Input is invalid")
+	ErrWrongLinkID  = errors.New("LinkId is not a valid number, or the remote issue link with the given id does not belong to the given issue")
+	ErrNoAuth       = errors.New("Calling user is not authenticated")
+	ErrNoContent    = errors.New("There is no content with the given ID, or the calling user does not have permission to view the content")
+	ErrGenResponse  = errors.New("Error occurs while generating the response")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewAPI create new API struct
-func NewAPI(url, username, password string) (*API, error) {
-	switch {
-	case url == "":
-		return nil, ErrInitEmptyURL
-	case username == "":
-		return nil, ErrInitEmptyUser
-	case password == "":
-		return nil, ErrInitEmptyPassword
+func NewAPI(url string, auth Auth) (*API, error) {
+	if url == "" {
+		return nil, ErrEmptyURL
+	}
+
+	err := auth.Validate()
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &API{
@@ -65,8 +64,8 @@ func NewAPI(url, username, password string) (*API, error) {
 			MaxConnsPerHost:     150,
 		},
 
-		url:       url,
-		basicAuth: genBasicAuthHeader(username, password),
+		url:  url,
+		auth: auth.Encode(),
 	}, nil
 }
 
@@ -155,7 +154,7 @@ func (api *API) GetColumns() ([]*Column, error) {
 	case 403:
 		return nil, ErrNoPerms
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -276,7 +275,7 @@ func (api *API) GetFilterDefaultScope() (string, error) {
 	case 200:
 		return result.Scope, nil
 	case 400:
-		return "", ErrGenReponse
+		return "", ErrGenResponse
 	case 401:
 		return "", ErrNoAuth
 	default:
@@ -673,7 +672,7 @@ func (api *API) GetIssueProperty(issueIDOrKey, propKey string) (*Property, error
 }
 
 // DeleteIssueProperty removes the property from the issue identified by the key
-// or by the id. Ths user removing the property is required to have permissions
+// or by the id. The user removing the property is required to have permissions
 // to edit the issue.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4937
 func (api *API) DeleteIssueProperty(issueIDOrKey, propKey string) error {
@@ -705,7 +704,7 @@ func (api *API) GetIssueLink(linkID string) (*Link, error) {
 	case 404:
 		return nil, ErrNoContent
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -864,7 +863,7 @@ func (api *API) GetAutocompleteData() (*AutocompleteData, error) {
 	case 404:
 		return nil, ErrNoContent
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1022,7 +1021,7 @@ func (api *API) GetProjects(params ExpandParameters) ([]*Project, error) {
 	case 401:
 		return nil, ErrNoAuth
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1075,7 +1074,7 @@ func (api *API) GetProjectAvatars(projectIDOrKey string) (*Avatars, error) {
 	case 404:
 		return nil, ErrNoContent
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1202,7 +1201,7 @@ func (api *API) GetProjectProperty(projectIDOrKey, propKey string) (*Property, e
 }
 
 // DeleteProjectProperty removes the property from the project identified by the key
-// or by the id. Ths user removing the property is required to have permissions to
+// or by the id. The user removing the property is required to have permissions to
 // administer the project.
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e962
 func (api *API) DeleteProjectProperty(projectIDOrKey, propKey string) error {
@@ -1278,7 +1277,7 @@ func (api *API) GetProjectCategories() ([]*ProjectCategory, error) {
 	case 401:
 		return nil, ErrNoAuth
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1608,7 +1607,7 @@ func (api *API) GetUserAvatars(username string) (*Avatars, error) {
 	case 404:
 		return nil, ErrNoContent
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -1636,7 +1635,7 @@ func (api *API) GetUserColumns(username string) ([]*Column, error) {
 	case 404:
 		return nil, ErrNoContent
 	case 500:
-		return nil, ErrGenReponse
+		return nil, ErrGenResponse
 	default:
 		return nil, makeUnknownError(statusCode)
 	}
@@ -2291,8 +2290,10 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 		req.Header.SetMethod(method)
 	}
 
-	// Set auth header
-	req.Header.Add("Authorization", "Basic "+api.basicAuth)
+	// Set authorization header
+	if api.auth != "" {
+		req.Header.Add("Authorization", api.auth)
+	}
 
 	return req
 }
@@ -2316,14 +2317,14 @@ func getUserAgent(app, version string) string {
 	if app != "" && version != "" {
 		return fmt.Sprintf(
 			"%s/%s %s/%s (go; %s; %s-%s)",
-			app, version, NAME, VERSION, runtime.Version(),
+			app, version, "Go-Jira", "3", runtime.Version(),
 			runtime.GOARCH, runtime.GOOS,
 		)
 	}
 
 	return fmt.Sprintf(
 		"%s/%s (go; %s; %s-%s)",
-		NAME, VERSION, runtime.Version(),
+		"Go-Jira", "3", runtime.Version(),
 		runtime.GOARCH, runtime.GOOS,
 	)
 }

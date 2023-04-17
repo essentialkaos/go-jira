@@ -15,23 +15,15 @@
 
 `go-jira` is a Go package for working with [Jira REST API](https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/).
 
-Currently, this package support only getting data from API (_i.e., you cannot create or modify data using this package_).
-
-_**Note, that this is beta software, so it's entirely possible that there will be some significant bugs. Please report bugs so that we are aware of the issues.**_
+**▲ Please take note that this package support only getting data from Jira API (_i.e. you cannot create or modify data using this package_).**
 
 ### Installation
 
-Make sure you have a working Go 1.17+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.18+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ````
-go get -d github.com/essentialkaos/go-jira/v2
+go get -u github.com/essentialkaos/go-jira/v3
 ````
-
-For update to latest stable release, do:
-
-```
-go get -d -u github.com/essentialkaos/go-jira/v2
-```
 
 ### Compatibility
 
@@ -47,11 +39,15 @@ package main
 
 import (
   "fmt"
-  "github.com/essentialkaos/go-jira/v2"
+  "github.com/essentialkaos/go-jira/v3"
 )
 
 func main() {
-  api, err := jira.NewAPI("https://jira.domain.com", "john", "MySuppaPAssWOrd")
+  // Create API instance with basic auth
+  api, err := jira.NewAPI("https://jira.domain.com", jira.AuthBasic{"john", "MySuppaPAssWOrd"})
+  // or with personal token auth
+  api, err = jira.NewAPI("https://jira.domain.com", jira.AuthToken{"avaMTxxxqKaxpFHpmwHPXhjmUFfAJMaU3VXUji73EFhf"})
+
   api.SetUserAgent("MyApp", "1.2.3")
 
   if err != nil {
@@ -70,7 +66,7 @@ func main() {
     return
   }
 
-  fmt.Println("%-v\n", issue)
+  fmt.Printf("%-v\n", issue)
 }
 ```
 
