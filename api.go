@@ -1012,10 +1012,8 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 		} else {
 			if !strings.HasPrefix(key, "customfield_") {
 				delete(f.Custom, key)
-			} else {
-				if bytes.Equal(chunk, nullBytes) {
-					delete(f.Custom, key)
-				}
+			} else if bytes.Equal(chunk, nullBytes) {
+				delete(f.Custom, key)
 			}
 		}
 	}
