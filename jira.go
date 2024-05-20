@@ -2,13 +2,12 @@ package jira
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -105,10 +104,10 @@ func (api *API) GetConfiguration() (*Configuration, error) {
 
 // GetServerInfo returns general information about the current JIRA server
 // https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/#d2e4836
-func (api *API) GetServerInfo(DoHealthCheck bool) (*ServerInfo, error) {
+func (api *API) GetServerInfo(doHealthCheck bool) (*ServerInfo, error) {
 	url := "/rest/api/2/serverInfo"
 
-	if DoHealthCheck {
+	if doHealthCheck {
 		url += "?doHealthCheck=true"
 	}
 
@@ -1645,7 +1644,6 @@ func (api *API) GetUserColumns(username string) ([]*Column, error) {
 // have all specified permissions for the project or issue. This resource can be
 // accessed by users with ADMINISTER_PROJECT permission for the project or global
 // ADMIN or SYSADMIN rights.
-//
 func (api *API) GetUsersByPermissions(params UserPermissionParams) ([]*User, error) {
 	result := []*User{}
 	statusCode, err := api.doRequest(
@@ -2327,11 +2325,6 @@ func getUserAgent(app, version string) string {
 		"Go-Jira", "3", runtime.Version(),
 		runtime.GOARCH, runtime.GOOS,
 	)
-}
-
-// genBasicAuthHeader generate basic auth header
-func genBasicAuthHeader(username, password string) string {
-	return base64.StdEncoding.EncodeToString([]byte(username + ":" + password))
 }
 
 // makeUnknownError create error struct for unknown error

@@ -2,7 +2,7 @@ package jira
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -42,19 +42,15 @@ func paramsToQuery(params interface{}) string {
 		case "string":
 			if value.String() != "" {
 				result += tag + "=" + esc(value.String()) + "&"
-			} else {
-				if hasTagOption(tag, _OPTION_RESPECT) {
-					result += getTagName(tag) + "=&"
-				}
+			} else if hasTagOption(tag, _OPTION_RESPECT) {
+				result += getTagName(tag) + "=&"
 			}
 
 		case "int":
 			if value.Int() != 0 {
 				result += tag + "=" + fmt.Sprintf("%d", value.Int()) + "&"
-			} else {
-				if hasTagOption(tag, _OPTION_RESPECT) {
-					result += getTagName(tag) + "=0&"
-				}
+			} else if hasTagOption(tag, _OPTION_RESPECT) {
+				result += getTagName(tag) + "=0&"
 			}
 
 		case "bool":
@@ -64,10 +60,8 @@ func paramsToQuery(params interface{}) string {
 			} else {
 				if b {
 					result += getTagName(tag) + "=true&"
-				} else {
-					if hasTagOption(tag, _OPTION_RESPECT) {
-						result += getTagName(tag) + "=false&"
-					}
+				} else if hasTagOption(tag, _OPTION_RESPECT) {
+					result += getTagName(tag) + "=false&"
 				}
 			}
 

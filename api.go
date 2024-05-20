@@ -2,7 +2,7 @@ package jira
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -1012,10 +1012,8 @@ func (f *IssueFields) UnmarshalJSON(b []byte) error {
 		} else {
 			if !strings.HasPrefix(key, "customfield_") {
 				delete(f.Custom, key)
-			} else {
-				if bytes.Equal(chunk, nullBytes) {
-					delete(f.Custom, key)
-				}
+			} else if bytes.Equal(chunk, nullBytes) {
+				delete(f.Custom, key)
 			}
 		}
 	}

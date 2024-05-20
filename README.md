@@ -9,21 +9,14 @@
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
 </p>
 
-<p align="center"><a href="#installation">Installation</a> • <a href="#compatibility">Compatibility</a> • <a href="#usage-example">Usage example</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#compatibility">Compatibility</a> • <a href="#usage-example">Usage example</a> • <a href="#ci-status">CI Status</a> • <a href="#license">License</a></p>
 
 <br/>
 
 `go-jira` is a Go package for working with [Jira REST API](https://docs.atlassian.com/software/jira/docs/api/REST/6.4.13/).
 
-**▲ Please take note that this package support only getting data from Jira API (_i.e. you cannot create or modify data using this package_).**
-
-### Installation
-
-Make sure you have a working Go 1.18+ workspace (_[instructions](https://golang.org/doc/install)_), then:
-
-````
-go get -u github.com/essentialkaos/go-jira/v3
-````
+> [!IMPORTANT]
+> **Please note that this package only supports retrieving data from the Jira API (_i.e. you cannot create or modify data with this package_).**
 
 ### Compatibility
 
@@ -70,7 +63,7 @@ func main() {
 }
 ```
 
-### Build Status
+### CI Status
 
 | Branch     | Status |
 |------------|--------|
