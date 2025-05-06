@@ -5,7 +5,6 @@
   <a href="https://kaos.sh/r/go-jira"><img src="https://kaos.sh/r/go-jira.svg" alt="GoReportCard" /></a>
   <a href="https://kaos.sh/w/go-jira/ci"><img src="https://kaos.sh/w/go-jira/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/w/go-jira/codeql"><img src="https://kaos.sh/w/go-jira/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
-  <a href="https://kaos.sh/b/go-jira"><img src="https://kaos.sh/b/29517531-a03f-41a5-8ef3-e77c8867d6d9.svg" alt="Codebeat badge" /></a>
   <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
@@ -70,8 +69,12 @@ func main() {
 | `master` (_Stable_) | [![CI](https://kaos.sh/w/go-jira/ci.svg?branch=master)](https://kaos.sh/w/go-jira/ci?query=branch:master) |
 | `develop` (_Unstable_) | [![CI](https://kaos.sh/w/go-jira/ci.svg?branch=develop)](https://kaos.sh/w/go-jira/ci?query=branch:develop) |
 
+### Contributing
+
+Before contributing to this project please read our [Contributing Guidelines](https://github.com/essentialkaos/.github/blob/master/CONTRIBUTING.md).
+
 ### License
 
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
-<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.st/ekgh.svg"/></a></p>
+<p align="center"><a href="https://kaos.dev"><img src="https://raw.githubusercontent.com/essentialkaos/.github/refs/heads/master/images/ekgh.svg"/></a></p>
